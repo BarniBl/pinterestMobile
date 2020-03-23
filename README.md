@@ -48,7 +48,7 @@ Pinterest mobile
 	Если аккаунта нет, то необходимо пройти процедуру регистрации: ввести Email, Логин и Пароль. 
 	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-02.md.png" alt="drawing" width="300"/>
 3. Экран "Профиль"  
-	Просмотр своих пинов и досок. Просмотр пинов другого юзера.  
+	Просмотр своих пинов и досок. Просмотр пинов другого юзера. Возможность подписаться на другого пользователя.  
 	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-03.md.png" alt="drawing" width="300"/>
 	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-04.md.png" alt="drawing" width="300"/>
 	<img src="https://i9.wampi.ru/2020/03/23/Untitled-16-12.md.png" alt="drawing" width="300"/>
@@ -71,6 +71,7 @@ Pinterest mobile
 9. Экран "Добавление пина"
 	Загрузка изображения, добавление описания и тегов. Прикрепление к выбранной доске.  
 	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-07.md.png" width="300"/>
+	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-08.png" width="300"/>
 10. Экран "Редактирование пина"
 	Изменение описания, тегов, доски уже размещённого пина.  
 	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-14.md.png" width="300"/>
