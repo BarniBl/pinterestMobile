@@ -43,36 +43,36 @@ Pinterest mobile
 
 1. Экран "Авторизация"  
 	Для использования приложения необходимо пройти авторизацию, иначе юзеру не доступен никакой функционал. Авторизация осуществляется по Email и Паролю.  
-	[![Untitled-16-01.md.png](https://s8.wampi.ru/2020/03/23/Untitled-16-01.md.png)](https://wampi.ru/image/691shWw)
+	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-01.md.png" alt="drawing" width="300"/>
 2. Экран "Регистрация"  
-	Если аккаунта нет, то необходимо пройти процедуру регистрации: ввести Email, Логин и Пароль.  
-	[![Untitled-16-02.md.png](https://s8.wampi.ru/2020/03/23/Untitled-16-02.md.png)](https://wampi.ru/image/691sPxs)
+	Если аккаунта нет, то необходимо пройти процедуру регистрации: ввести Email, Логин и Пароль. 
+	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-02.md.png" alt="drawing" width="300"/>
 3. Экран "Профиль"  
-	Просмотр своих пинов и досок. Просмотр пинов другого юзера.  
-	[![Untitled-16-03.md.png](https://s9.wampi.ru/2020/03/23/Untitled-16-03.md.png)](https://wampi.ru/image/691qpBr)
-	[![Untitled-16-04.md.png](https://s9.wampi.ru/2020/03/23/Untitled-16-04.md.png)](https://wampi.ru/image/691qIcV)
-	[![Untitled-16-12.md.png](https://i9.wampi.ru/2020/03/23/Untitled-16-12.md.png)](https://wampi.ru/image/691EUhf)
+	Просмотр своих пинов и досок. Просмотр пинов другого юзера. 
+	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-03.md.png" alt="drawing" width="300"/>
+	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-04.md.png" alt="drawing" width="300"/>
+	<img src="https://i9.wampi.ru/2020/03/23/Untitled-16-12.md.png" alt="drawing" width="300"/>
 4. Экран "Личные данные"
 	На этом экране пользователю доступны просмотр и редактирование личных данных, которые сохранены в приложении: Имя, Фамилия, Никнейм, Статус.  
-	[![Untitled-16-13.md.png](https://s8.wampi.ru/2020/03/23/Untitled-16-13.md.png)](https://wampi.ru/image/691E2t8)
+	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-13.md.png" alt="drawing" width="300"/>
 5. Экран "Главная"  
 	Список новых пинов, список пинов с подписок. Возможность нажать на пин, для перехода на новый экран и просмотра деталей публикации.  
-	[![Untitled-16-09.th.png](https://s8.wampi.ru/2020/03/23/Untitled-16-09.th.png)](https://wampi.ru/image/691BSvw)
+	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-09.md.png" alt="drawing" width="300"/>
 6. Экран "Просмотр доски"   
 	Список пинов, которые принадлежат выбранной доске. Возможность нажать на пин, для перехода на новый экран и просмотра деталей публикации.  
-	[![Untitled-16-11.md.png](https://s9.wampi.ru/2020/03/23/Untitled-16-11.md.png)](https://wampi.ru/image/691EF2O)
+	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-11.md.png" width="300"/>
 7. Экран "Просмотр пина"  
 	Просмотр подробной информации о пине: увеличенное изображение, автор, описание, теги, просмотр комментарией (автор, текст).  
-	[![Untitled-16-10.md.png](https://s8.wampi.ru/2020/03/23/Untitled-16-10.md.png)](https://wampi.ru/image/691Evpq)
+	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-10.md.png" width="600"/>
 8. Экран "Добавление доски"  
 	Ввод названия доски и её описания. Доска сохраняется у юзера, после чего на эту доску можно сохранять пины.  
-	[![Untitled-16-05.md.png](https://s9.wampi.ru/2020/03/23/Untitled-16-05.md.png)](https://wampi.ru/image/691B5Dq)
-	[![Untitled-16-06.md.png](https://i9.wampi.ru/2020/03/23/Untitled-16-06.md.png)](https://wampi.ru/image/691Binc)
+	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-05.md.png" width="300"/>
+	<img src="https://i9.wampi.ru/2020/03/23/Untitled-16-06.md.png" width="300"/>
 9. Экран "Добавление пина"
 	Загрузка изображения, добавление описания и тегов. Прикрепление к выбранной доске.  
-	[![Untitled-16-07.md.png](https://s8.wampi.ru/2020/03/23/Untitled-16-07.md.png)](https://wampi.ru/image/691BfSg)
+	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-07.md.png" width="300"/>
 10. Экран "Редактирование пина"
 	Изменение описания, тегов, доски уже размещённого пина.  
-	[![Untitled-16-14.md.png](https://s9.wampi.ru/2020/03/23/Untitled-16-14.md.png)](https://wampi.ru/image/691Ep6I)
+	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-14.md.png" width="300"/>
 
 	
