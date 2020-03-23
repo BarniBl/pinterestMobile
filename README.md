@@ -48,7 +48,7 @@ Pinterest mobile
 	Если аккаунта нет, то необходимо пройти процедуру регистрации: ввести Email, Логин и Пароль. 
 	<img src="https://s8.wampi.ru/2020/03/23/Untitled-16-02.md.png" alt="drawing" width="300"/>
 3. Экран "Профиль"  
-	Просмотр своих пинов и досок. Просмотр пинов другого юзера. 
+	Просмотр своих пинов и досок. Просмотр пинов другого юзера.  
 	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-03.md.png" alt="drawing" width="300"/>
 	<img src="https://s9.wampi.ru/2020/03/23/Untitled-16-04.md.png" alt="drawing" width="300"/>
 	<img src="https://i9.wampi.ru/2020/03/23/Untitled-16-12.md.png" alt="drawing" width="300"/>
