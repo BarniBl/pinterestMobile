@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_navigation_index"
+        android:icon="@drawable/index_button"
+        android:title="Главная"
+        />
+    <item
+        android:id="@+id/bottom_navigation_search"
+        android:icon="@drawable/search_button"
+        android:title="Поиск"
+        />
+    <item
+        android:id="@+id/bottom_navigation_plus"
+        android:icon="@drawable/plus_button"
+        android:title="Создать"
+        />
+    <item
+        android:id="@+id/bottom_navigation_home"
+        android:icon="@drawable/home_button"
+        android:title="Профиль"
+        />
+</menu>

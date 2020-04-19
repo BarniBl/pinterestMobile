@@ -51,7 +51,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                />
+                android:textColorHighlight="@color/redhead"
+                android:textColorLink="@color/redhead"
+                android:textCursorDrawable="@color/redhead" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
