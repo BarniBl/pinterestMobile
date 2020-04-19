@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/your_profile_header_w_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -40,7 +41,6 @@
                 android:text="статус"
                 android:textSize="17dp"
                 android:textColor="@android:color/black"/>
-
         </LinearLayout>
 
         <LinearLayout
@@ -50,17 +50,46 @@
             android:gravity="right">
 
             <Button
+                android:id="@+id/your_profile_buttons_edit_button"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/edit"/>
             <Button
+                android:id="@+id/your_profile_buttons_plus_button"
                 android:layout_width="33dp"
                 android:layout_height="33dp"
                 android:background="@drawable/plus_board_pin"
                 android:layout_marginTop="30dp"/>
-
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/your_profile_pin_board_buttons"
+        android:layout_below="@id/your_profile_header_w_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/your_profile_buttons_board_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="Доски"/>
+        <Button
+            android:id="@+id/your_profile_buttons_pin_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Пины"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@id/your_profile_pin_board_buttons"
+        android:layout_margin="10dp"
+        android:id="@+id/your_profile_doard_pin_f_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
 
    <com.google.android.material.bottomnavigation.BottomNavigationView
        android:layout_width="match_parent"
