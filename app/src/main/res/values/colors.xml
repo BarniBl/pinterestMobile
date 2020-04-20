@@ -3,4 +3,6 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="redhead">#FF8F0C</color>
+    <color name="silver_gray">#C4C4C4</color>
 </resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/boards_names_list_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Выберите доску"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textSize="25dp"/>
+        <Button
+            android:id="@+id/boards_names_list_close_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/close"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/boards_names_list_title"
+            android:layout_marginBottom="5dp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/board_names_list_create_board_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/plus_create_board_button"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Создать доску"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
+</RelativeLayout>
