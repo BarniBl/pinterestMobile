@@ -40,7 +40,7 @@
             android:layout_gravity="center_horizontal"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/Registration_view_email_layout"
+            android:id="@+id/registration_view_email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true">
@@ -54,7 +54,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/Registration_view_nickname_layout"
+            android:id="@+id/registration_view_nickname_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true">
@@ -68,7 +68,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/Registration_view_password_layout"
+            android:id="@+id/registration_view_password_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:passwordToggleEnabled="true"
@@ -83,13 +83,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/Registration_view_button"
+            android:id="@+id/registration_view_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Зарегистрироваться"
             android:textSize="16dp"
             android:background="@drawable/loginbutton"
             android:textColor="@android:color/white"
+            android:layout_marginTop="10dp"
             />
 
         <TextView
@@ -112,7 +113,8 @@
             android:textColor="@android:color/black"
             android:textStyle="bold"
             android:background="@android:color/white"
-            android:shadowColor="@android:color/white"/>
+            android:shadowColor="@android:color/white"
+            android:clickable="true"/>
 
     </LinearLayout>
 </FrameLayout>
