@@ -91,16 +91,17 @@
             android:layout_marginTop="10dp"
             />
 
-        <TextView
+        <Button
+            android:id="@+id/login_to_registration_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:text="Регистрация"
             android:layout_gravity="center_horizontal"
-            android:textSize="14dp"
+            android:textSize="10dp"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            />
-
+            android:background="@android:color/white"
+            android:shadowColor="@android:color/white"/>
     </LinearLayout>
 
 
