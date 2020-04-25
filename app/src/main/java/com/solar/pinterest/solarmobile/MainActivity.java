@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextInputLayout textInputEmail;
     TextInputLayout textInputPassword;
+    TextView errorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         textInputEmail = findViewById(R.id.login_view_email_layout);
         textInputPassword = findViewById(R.id.login_view_password_layout);
+        errorTextView = findViewById(R.id.login_error_text_under_title);
 
         toRegistrationBtn = findViewById(R.id.login_to_registration_button);
         toRegistrationBtn.setOnClickListener(new View.OnClickListener() {
