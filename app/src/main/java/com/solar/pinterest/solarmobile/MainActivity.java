@@ -18,12 +18,11 @@ import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.LoginResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarDatabase;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
-import java.net.HttpCookie;
 
 import com.google.gson.Gson;
 
@@ -48,11 +47,6 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SolarRepo.get(getApplication()).setMasterUser(
-                new DBSchema.User(12345, "Tamerlanchik", "Nameqwdqwdwq", "Sur",
-                        "aaa@ss.er", 123, "Alive", "static/pin/d7/d76dd9d60ca86d2781308fc9a09e114e.jpg",
-                        true, "2019-12-14 15:21", true)
-        );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
@@ -96,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                         SolarRepo.get(getApplication()).setMasterUser(
                                 new DBSchema.User(user.id, user.username, user.name, user.surname,
                                         user.email, user.age, user.status, user.avatarDir,
-                                        user.isActive, user.createdTime, false));
+                                        user.isActive, TimestampConverter.toDate(user.createdTime), false));
 
                         Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
                         startActivity(intent);

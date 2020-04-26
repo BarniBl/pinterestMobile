@@ -1,18 +1,32 @@
 package com.solar.pinterest.solarmobile.storage;
 
-import androidx.lifecycle.LiveData;
+import android.util.Log;
+
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Entity;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
 import androidx.room.Query;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 import androidx.room.Update;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 public class DBSchema {
     @Dao
     public interface UserDao {
-        @Insert
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
         void insert(User user);
 
         @Delete
@@ -36,11 +50,12 @@ public class DBSchema {
         private String status;
         private String avatar;
         private boolean active;
-        private String created;
+        @TypeConverters({TimestampConverter.class})
+        private Date created;
         private boolean subscribed;
 
 
-        public User(int id, String username, String name, String surname, String email, int age, String status, String avatar, boolean active, String created, boolean subscribed) {
+        public User(int id, String username, String name, String surname, String email, int age, String status, String avatar, boolean active, Date created, boolean subscribed) {
             this.id = id;
             this.username = username;
             this.name = name;
@@ -126,11 +141,11 @@ public class DBSchema {
             this.active = active;
         }
 
-        public String getCreated() {
+        public Date getCreated() {
             return created;
         }
 
-        public void setCreated(String created) {
+        public void setCreated(Date created) {
             this.created = created;
         }
 
@@ -143,28 +158,133 @@ public class DBSchema {
         }
     }
 
-//    @Dao
-//    public interface SessionDao {
-//        @Insert
-//        void setSession(Session session);
-//        @Delete
-//        void deleteSession(Session session);
-//
-//        @Query("SELECT * FROM session")
-//        LiveData<Session> getSession();
-//    }
-//
-//    @Entity
-//    public class Session {
-//        private String key;
-//        private String value;
-//
-//        public String get() {
-//            return ;
-//        }
-//
-//        public void setId(int id) {
-//            this.id = id;
-//        }
-//    }
+    @Dao
+    public interface PinDao {
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        void insert(Pin pin);
+
+        @Query("SELECT * FROM Pin where id = :id")
+        Pin getPin(int id);
+
+        @Delete
+        void delete(Pin pin);
+    }
+
+    @Entity
+    public static class Pin {
+        @PrimaryKey private int id;
+        private String authorUsername;
+        private String ownerUsername;
+        private int boardId;
+        @TypeConverters({TimestampConverter.class})
+        private Date created;
+        private String path;
+        private String title;
+        private String description;
+        private boolean deleted;
+
+        public Pin(int id, String authorUsername, String ownerUsername, int boardId, Date created, String path, String title, String description, boolean deleted) {
+            this.id = id;
+            this.authorUsername = authorUsername;
+            this.ownerUsername = ownerUsername;
+            this.boardId = boardId;
+            this.created = created;
+            this.path = path;
+            this.title = title;
+            this.description = description;
+            this.deleted = deleted;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getAuthorUsername() {
+            return authorUsername;
+        }
+
+        public void setAuthorUsername(String authorUsername) {
+            this.authorUsername = authorUsername;
+        }
+
+        public String getOwnerUsername() {
+            return ownerUsername;
+        }
+
+        public void setOwnerUsername(String ownerUsername) {
+            this.ownerUsername = ownerUsername;
+        }
+
+        public int getBoardId() {
+            return boardId;
+        }
+
+        public void setBoardId(int boardId) {
+            this.boardId = boardId;
+        }
+
+        public Date getCreated() {
+            return created;
+        }
+
+        public void setCreated(Date created) {
+            this.created = created;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public boolean isDeleted() {
+            return deleted;
+        }
+
+        public void setDeleted(boolean deleted) {
+            this.deleted = deleted;
+        }
+    }
+
+    static class TimestampConverter {
+        private static final String sDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
+        @TypeConverter
+        String fromDate(Date timestamp) {
+            DateFormat df = new SimpleDateFormat(sDateFormat);
+            return df.format(timestamp);
+        }
+
+        @TypeConverter
+        Date toDate(String timestamp) {
+            DateFormat df = new SimpleDateFormat(sDateFormat);
+            try {
+                return df.parse(timestamp);
+            } catch (ParseException e) {
+                Log.e("Solar", "Cannot parse date");
+                return new Date();
+            }
+        }
+    }
 }

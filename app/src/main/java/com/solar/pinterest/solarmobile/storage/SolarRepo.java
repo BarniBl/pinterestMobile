@@ -15,6 +15,7 @@ import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -56,6 +57,16 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
 
     public void putUser(DBSchema.User user) {
         mDatabase.putUser(user);
+    }
+
+    @Override
+    public void getPin(int id, OnReadListener<DBSchema.Pin> listener) {
+        mDatabase.getPin(id, listener);
+    }
+
+    @Override
+    public void putPin(DBSchema.Pin pin) {
+        mDatabase.putPin(pin);
     }
 
     @Override

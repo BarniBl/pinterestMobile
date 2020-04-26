@@ -7,6 +7,7 @@ public class SolarDatabase implements DBInterface {
     private static SolarDatabase INSTANCE;
 
     private DBSchema.UserDao mUserDao;
+    private DBSchema.PinDao mPinDao;
 
     public static SolarDatabase get(Context context) {
         if (INSTANCE == null) {
@@ -17,6 +18,7 @@ public class SolarDatabase implements DBInterface {
 
     private SolarDatabase(Context context) {
         mUserDao = AppDatabase.get(context).getUserDao();
+        mPinDao = AppDatabase.get(context).getPinDao();
     }
 
     public void getUser(int id, DBInterface.UserListener listener) {
@@ -28,12 +30,22 @@ public class SolarDatabase implements DBInterface {
 
     public void putUser(DBSchema.User user) throws SQLiteConstraintException {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            try{
-                mUserDao.insert(user);
-            } catch (SQLiteConstraintException e) {
-                mUserDao.delete(user);
-                mUserDao.insert(user);
-            }
+            mUserDao.insert(user);
+        });
+    }
+
+    @Override
+    public void getPin(int id, OnReadListener<DBSchema.Pin> listener) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            DBSchema.Pin pin = mPinDao.getPin(id);
+            listener.call(pin);
+        });
+    }
+
+    @Override
+    public void putPin(DBSchema.Pin pin) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mPinDao.insert(pin);
         });
     }
 }
