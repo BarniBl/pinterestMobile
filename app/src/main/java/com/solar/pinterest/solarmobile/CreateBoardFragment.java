@@ -28,6 +28,7 @@ public class CreateBoardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_board, container, false);
+        getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.GONE);
 
         textInputTitle = view.findViewById(R.id.create_board_title_field);
         textInputDiscription = view.findViewById(R.id.create_board_description_field);
@@ -38,6 +39,7 @@ public class CreateBoardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("CreateBoard", "Close");
+                getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
                 getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
             }
         });

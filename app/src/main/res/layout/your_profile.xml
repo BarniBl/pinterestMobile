@@ -93,6 +93,7 @@
         android:orientation="vertical"/>
 
    <com.google.android.material.bottomnavigation.BottomNavigationView
+       android:id="@+id/your_profile_bottom_navigation"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:layout_alignParentBottom="true"
