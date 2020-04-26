@@ -47,7 +47,11 @@ public class RegistrationActivity extends AppCompatActivity {
         registrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirmInput(v);
+                boolean flag = confirmInput(v);
+                if (flag) {
+                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -95,9 +99,9 @@ public class RegistrationActivity extends AppCompatActivity {
         }
     }
 
-    public void confirmInput(View v) {
+    public boolean confirmInput(View v) {
         if (!emailValidation() | !nicknameValidation() | !passwordValidation()) {
-            return;
+            return false;
         }
 
         String input = textInputEmail.getEditText().getText().toString();
@@ -107,5 +111,7 @@ public class RegistrationActivity extends AppCompatActivity {
         input += textInputPassword.getEditText().getText().toString();
 
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+
+        return true;
     }
 }
