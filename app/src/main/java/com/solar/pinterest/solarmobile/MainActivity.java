@@ -46,7 +46,11 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirmInput(v);
+                boolean flag = confirmInput(v);
+                if (flag) {
+                    Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -82,9 +86,9 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
         }
     }
 
-    public void confirmInput(View v) {
+    public boolean confirmInput(View v) {
         if (!emailValidation() | !passwordValidation()) {
-            return;
+            return false;
         }
 
         String input = textInputEmail.getEditText().getText().toString();
@@ -94,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
 
 
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     @Override
