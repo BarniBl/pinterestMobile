@@ -63,8 +63,11 @@ public class YourProfileEditingFragment extends Fragment {
         chooseAvatarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] mimeTypes = {"image/jpeg", "image/png"};
+
                 Intent intent = new Intent();
-                intent.setType("image/png, image/jpg");
+                intent.setType("image/*").putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
             }
