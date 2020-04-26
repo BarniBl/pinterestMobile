@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
@@ -57,6 +58,11 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         mDatabase.getUser(id, listener);
     }
 
+    @Override
+    public void getUser(String nick, OnReadListener<DBSchema.User> listener) {
+        mDatabase.getUser(nick, listener);
+    }
+
     public void putUser(DBSchema.User user) {
         mDatabase.putUser(user);
     }
@@ -67,8 +73,38 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
+    public void getPins(int[] ids, OnReadListener<Pair<List<DBSchema.Pin>, List<Integer>>> listener) {
+        mDatabase.getPins(ids, listener);
+    }
+
+    @Override
+    public void getBoardPins(int id, OnReadListener<List<DBSchema.Pin>> listener) {
+        mDatabase.getBoardPins(id, listener);
+    }
+
+    @Override
     public void putPin(DBSchema.Pin pin) {
         mDatabase.putPin(pin);
+    }
+
+    @Override
+    public void putPins(List<DBSchema.Pin> pins) {
+        mDatabase.putPins(pins);
+    }
+
+    @Override
+    public void getBoard(int id, OnReadListener<DBSchema.Board> listener) {
+        mDatabase.getBoard(id, listener);
+    }
+
+    @Override
+    public void putBoard(DBSchema.Board board) {
+        mDatabase.putBoard(board);
+    }
+
+    @Override
+    public void getUserBoards(int userid, OnReadListener<List<DBSchema.Board>> listener) {
+        mDatabase.getUserBoards(userid, listener);
     }
 
     @Override
