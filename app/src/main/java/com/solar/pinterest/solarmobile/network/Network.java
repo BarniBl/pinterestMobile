@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 
+import java.net.HttpCookie;
+
 import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -63,6 +65,19 @@ public class Network implements NetworkInterface {
         Request request = new Request.Builder()
                 .url(BASE_URL + path)
                 .method("POST", body)
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void profileData(HttpCookie cookie, Callback callbackFunc) {
+        String path = "/api/v1/profile/data";
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("GET", null)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
                 .build();
 
         client.newCall(request).enqueue(callbackFunc);

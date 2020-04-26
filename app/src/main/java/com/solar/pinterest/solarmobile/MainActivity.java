@@ -16,11 +16,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
-import com.solar.pinterest.solarmobile.network.models.LoginResponse;
+import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarDatabase;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import java.net.HttpCookie;
@@ -83,12 +82,12 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
-                        if (!loginResponse.body.info.equals("OK")) {
-                            errorTextView.setText(loginResponse.body.info);
+                        ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
+                        if (!profileResponse.body.info.equals("OK")) {
+                            errorTextView.setText(profileResponse.body.info);
                             return;
                         }
-                        User user = loginResponse.body.user;
+                        User user = profileResponse.body.user;
                         List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
                         for (HttpCookie cookie : cookies) {
                             String cookieName = cookie.getName();

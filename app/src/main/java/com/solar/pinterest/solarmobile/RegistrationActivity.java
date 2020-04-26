@@ -4,10 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,12 +13,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.network.Network;
-import com.solar.pinterest.solarmobile.network.models.LoginData;
-import com.solar.pinterest.solarmobile.network.models.LoginResponse;
+import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
-import com.solar.pinterest.solarmobile.network.models.RegistrationResponse;
-import com.solar.pinterest.solarmobile.network.models.User;
-import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import org.jetbrains.annotations.NotNull;
@@ -82,9 +76,9 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        RegistrationResponse registrationResponse = gson.fromJson(response.body().string(), RegistrationResponse.class);
-                        if (!registrationResponse.body.info.equals("OK")) {
-                            errorTextView.setText(registrationResponse.body.info);
+                        ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
+                        if (!profileResponse.body.info.equals("OK")) {
+                            errorTextView.setText(profileResponse.body.info);
                             return;
                         }
                         List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
