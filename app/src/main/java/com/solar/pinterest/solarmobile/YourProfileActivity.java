@@ -16,6 +16,8 @@ import android.widget.Toast;
 public class YourProfileActivity extends AppCompatActivity {
 
     Button addPinsBoardsButton;
+    Button settingsButton;
+
     Fragment selectedFragment;
 
     @Override
@@ -30,6 +32,17 @@ public class YourProfileActivity extends AppCompatActivity {
                 showSelectionBox();
             }
         });
+
+        settingsButton = findViewById(R.id.your_profile_buttons_edit_button);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedFragment = new YourProfileEditingFragment();
+                replaceFragment(selectedFragment);
+            }
+        });
+
+        findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
     }
 
     private void showSelectionBox() {
@@ -51,13 +64,9 @@ public class YourProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                selectedFragment = new CreateBoardFragment();
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.your_profile_view_relativeLayout, selectedFragment)
-                        .addToBackStack(null)
-                        .commit();
+                selectedFragment = new CreateBoardFragment();
+                replaceFragment(selectedFragment);
             }
         });
 
@@ -69,5 +78,19 @@ public class YourProfileActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    public void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.your_profile_view_relativeLayout, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    // Для не разрешения вернуться назад по кнопке на телефоне
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
     }
 }
