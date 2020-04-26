@@ -74,6 +74,9 @@ public class YourProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+
+                selectedFragment = new CreatePinFragment();
+                replaceFragment(selectedFragment);
             }
         });
 
