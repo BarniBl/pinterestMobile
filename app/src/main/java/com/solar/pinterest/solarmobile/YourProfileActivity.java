@@ -2,7 +2,9 @@ package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 public class YourProfileActivity extends AppCompatActivity {
 
     Button addPinsBoardsButton;
+    Fragment selectedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +33,41 @@ public class YourProfileActivity extends AppCompatActivity {
     }
 
     private void showSelectionBox() {
-        AlertDialog.Builder showDialod = new AlertDialog.Builder(this);
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.create_pin_board_choose_card);
 
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View choose_menu = inflater.inflate(R.layout.create_pin_board_choose_card, null);
+        Button dialogCloseButton = (Button)dialog.findViewById(R.id.create_pin_board_choose_card_close);
+        Button dialogChooseBoard = (Button)dialog.findViewById(R.id.create_pin_board_choose_card_add_board);
+        Button dialogChoosePin = (Button)dialog.findViewById(R.id.create_pin_board_choose_card_add_pin);
 
-        showDialod.setTitle("Создать");
-        showDialod.setView(choose_menu);
-        showDialod.setNegativeButton("[X]", new DialogInterface.OnClickListener() {
+        dialogCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 dialog.dismiss();
             }
         });
 
-        showDialod.show();
+        dialogChooseBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                selectedFragment = new CreateBoardFragment();
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.your_profile_view_relativeLayout, selectedFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        dialogChoosePin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }
