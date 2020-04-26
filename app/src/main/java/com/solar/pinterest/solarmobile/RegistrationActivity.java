@@ -26,6 +26,8 @@ import com.solar.pinterest.solarmobile.storage.SolarRepo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.HttpCookie;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -80,13 +82,20 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        RegistrationResponse loginResponse = gson.fromJson(response.body().string(), RegistrationResponse.class);
-                        User user = loginResponse.body.user;
+                        RegistrationResponse registrationResponse = gson.fromJson(response.body().string(), RegistrationResponse.class);
+                        if (!registrationResponse.body.info.equals("OK")) {
+                            errorTextView.setText(registrationResponse.body.info);
+                            return;
+                        }
+                        List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
+                        for (HttpCookie cookie : cookies) {
+                            String cookieName = cookie.getName();
+                            if (cookieName.equals("session_key")) {
+                                SolarRepo.get(getApplication()).setSessionCookie(cookie);
+                                break;
+                            }
+                        }
 
-                        SolarRepo.get(getApplication()).setMasterUser(
-                                new DBSchema.User(user.id, user.username, user.name, user.surname,
-                                        user.email, user.age, user.status, user.avatarDir,
-                                        user.isActive, user.createdTime, false));
 
                         Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
                         startActivity(intent);
