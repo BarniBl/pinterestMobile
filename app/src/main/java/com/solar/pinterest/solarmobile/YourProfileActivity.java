@@ -12,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import android.widget.TextView;
+
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +28,11 @@ public class YourProfileActivity extends AppCompatActivity {
 
     Button addPinsBoardsButton;
     Button settingsButton;
+    TextView errorTextYourProfile;
+
+    ImageView yourProfileAvatarImage;
+    TextView yourProfileNickname;
+    TextView yourProfileStatus;
 
     Fragment selectedFragment;
     CircleImageView mAvatar;
@@ -33,6 +41,12 @@ public class YourProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.your_profile);
+
+        errorTextYourProfile = findViewById(R.id.your_profile_view_error_field);
+
+        yourProfileAvatarImage = findViewById(R.id.your_profile_view_image_field);
+        yourProfileNickname = findViewById(R.id.your_profile_view_nickname_field);
+        yourProfileStatus = findViewById(R.id.your_profile_view_status_field);
 
         addPinsBoardsButton = findViewById(R.id.your_profile_buttons_plus_button);
         addPinsBoardsButton.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +115,9 @@ public class YourProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+
+                selectedFragment = new CreatePinFragment();
+                replaceFragment(selectedFragment);
             }
         });
 

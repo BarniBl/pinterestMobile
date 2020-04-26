@@ -50,12 +50,22 @@
             <ImageButton
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:id="@+id/profile_editing_image_button"
                 android:background="@drawable/profile_editing_button"
                 android:layout_alignRight="@+id/your_profile_editing_image"
                 android:layout_alignBottom="@+id/your_profile_editing_image"
                 android:src="@drawable/your_profile_editing_photo_button"
                 android:clickable="true"/>
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/your_profile_editing_error_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="center"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/your_profile_editing_name_field"

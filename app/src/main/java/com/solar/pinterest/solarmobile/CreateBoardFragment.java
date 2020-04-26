@@ -50,6 +50,7 @@ public class CreateBoardFragment extends Fragment {
                 boolean flag = confirmInput(v);
                 if (flag) {
                     // Ваш TODO CODE
+                    getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
                     getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
                 }
             }
