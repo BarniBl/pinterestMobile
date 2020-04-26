@@ -11,8 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
+import com.solar.pinterest.solarmobile.storage.SolarDatabase;
+import com.solar.pinterest.solarmobile.storage.StorageInterface;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements StorageInterface.Listener{
 
     Button toRegistrationBtn;
     Button loginBtn;
@@ -47,14 +50,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        DBHelper.get(getApplicationContext()).setUser(
-                new DBSchema.User(123, "Tamer", "Name", "Sur",
+        SolarDatabase.get(getApplication()).putUser(
+                new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
                         "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
                         true, "2019-12-14 15:21")
         );
-        Log.d("Solar", "Put values");
-        DBSchema.User user = DBHelper.get(getApplicationContext()).getUser(123);
-        Log.d("Solar", "Got values");
+        SolarDatabase.get(getApplication()).getUser(129, this);
     }
 
     private boolean emailValidation() {
@@ -93,5 +94,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onReadUser(DBSchema.User user) {
+        DBSchema.User ds = user;
+        Log.d("Solar", "Got values");
     }
 }
