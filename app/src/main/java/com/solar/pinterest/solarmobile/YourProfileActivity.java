@@ -80,7 +80,7 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
 
         try {
             SolarRepo.get(getApplication()).getMasterUser(this);
-        } catch (SQLException exception) {
+        } catch (Exception exception) {
 
             HttpCookie cookie = SolarRepo.get(getApplication()).getSessionCookie();
             if (cookie == null) {

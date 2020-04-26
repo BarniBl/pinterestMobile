@@ -129,7 +129,7 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     @Nullable
     public HttpCookie getSessionCookie() {
         List<HttpCookie> cookieList = mCookieStore.get(
-                URI.create(mContext.getString(R.string.backend_uri)));
+                URI.create(mContext.getString(R.string.cookie_uri)));
         for(HttpCookie cookie : cookieList) {
             if (cookie.getName() == mContext.getString(R.string.session_cookie)) {
                 return cookie;
@@ -140,7 +140,7 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
 
     @Override
     public void setSessionCookie(HttpCookie cookie) {
-        mCookieStore.add(URI.create(mContext.getString(R.string.backend_uri)), cookie);
+        mCookieStore.add(URI.create(mContext.getString(R.string.cookie_uri)), cookie);
     }
 
     @Override
