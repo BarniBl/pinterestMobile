@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
         toRegistrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
+                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
                 startActivity(intent);
             }
         });
@@ -83,7 +84,19 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
                         LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
+                        if (!loginResponse.body.info.equals("OK")) {
+                            errorTextView.setText(loginResponse.body.info);
+                            return;
+                        }
                         User user = loginResponse.body.user;
+                        List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
+                        for (HttpCookie cookie : cookies) {
+                            String cookieName = cookie.getName();
+                            if (cookieName.equals("session_key")) {
+                                SolarRepo.get(getApplication()).setSessionCookie(cookie);
+                                break;
+                            }
+                        }
 
                         SolarRepo.get(getApplication()).setMasterUser(
                                 new DBSchema.User(user.id, user.username, user.name, user.surname,

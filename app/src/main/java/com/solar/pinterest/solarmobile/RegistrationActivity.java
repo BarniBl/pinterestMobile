@@ -12,6 +12,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.LoginData;
+import com.solar.pinterest.solarmobile.network.models.LoginResponse;
+import com.solar.pinterest.solarmobile.network.models.RegistrationData;
+import com.solar.pinterest.solarmobile.network.models.RegistrationResponse;
+import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -47,11 +65,35 @@ public class RegistrationActivity extends AppCompatActivity {
         registrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean flag = confirmInput(v);
-                if (flag) {
-                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
-                    startActivity(intent);
+                if (!confirmInput(v)) {
+                    return;
                 }
+                RegistrationData registrationData = new RegistrationData(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString());
+
+                Callback registrationCallback = new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        errorTextView.setText("Сервер временно недоступен");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        GsonBuilder builder = new GsonBuilder();
+                        Gson gson = builder.create();
+                        RegistrationResponse loginResponse = gson.fromJson(response.body().string(), RegistrationResponse.class);
+                        User user = loginResponse.body.user;
+
+                        SolarRepo.get(getApplication()).setMasterUser(
+                                new DBSchema.User(user.id, user.username, user.name, user.surname,
+                                        user.email, user.age, user.status, user.avatarDir,
+                                        user.isActive, user.createdTime, false));
+
+                        Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
+                        startActivity(intent);
+                    }
+                };
+
+                Network.getInstance().registration(registrationData, registrationCallback);
             }
         });
     }
