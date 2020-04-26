@@ -28,15 +28,18 @@ public class CreateBoardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_board, container, false);
+        getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.GONE);
 
         textInputTitle = view.findViewById(R.id.create_board_title_field);
         textInputDiscription = view.findViewById(R.id.create_board_description_field);
+        errorTextView = view.findViewById(R.id.create_board_error_field);
 
         closeButton = view.findViewById(R.id.create_board_close_button);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CLose", "Close");
+                getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
+                getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
             }
         });
 
@@ -44,8 +47,12 @@ public class CreateBoardFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CLose", "Ok");
-                confirmInput(v);
+                boolean flag = confirmInput(v);
+                if (flag) {
+                    // Ваш TODO CODE
+                    getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
+                    getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
+                }
             }
         });
 
@@ -64,15 +71,16 @@ public class CreateBoardFragment extends Fragment {
         }
     }
 
-    public void confirmInput(View v) {
+    private boolean confirmInput(View v) {
         if (!titleValidation()) {
-            return;
+            return false;
         }
 
         String input = textInputTitle.getEditText().getText().toString().trim();
         input += "\n";
         input += textInputDiscription.getEditText().getText().toString().trim();
 
-        Log.d("Close", input);
+        Log.d("CreateBoard", input);
+        return true;
     }
 }

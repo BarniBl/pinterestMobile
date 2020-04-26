@@ -18,12 +18,11 @@ import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.LoginResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarDatabase;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
-import java.net.HttpCookie;
 
 import com.google.gson.Gson;
 
@@ -32,11 +31,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener {
+    public static final MediaType JSON_TYPE = MediaType.parse("application/json");
     Button toRegistrationBtn;
     Button loginBtn;
 
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                         SolarRepo.get(getApplication()).setMasterUser(
                                 new DBSchema.User(user.id, user.username, user.name, user.surname,
                                         user.email, user.age, user.status, user.avatarDir,
-                                        user.isActive, user.createdTime, false));
+                                        user.isActive, TimestampConverter.toDate(user.createdTime), false));
 
                         Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
                         startActivity(intent);
@@ -155,18 +157,5 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
     public void onReadUser(DBSchema.User user) {
         DBSchema.User ds = user;
         Log.d("Solar", "Got values");
-    }
-
-    void test() {
-        SolarRepo.get(getApplication()).setMasterUser(
-                new DBSchema.User(2222, "Tamerlanchik", "Nameqwdqwdwq", "Sur",
-                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
-                        true, "2019-12-14 15:21", true)
-        );
-        SolarRepo.get(getApplication()).getMasterUser(this);
-        HttpCookie cookie = new HttpCookie(getApplicationContext().getString(R.string.session_cookie), "ffwfewfef");
-        SolarRepo.get(getApplication()).setSessionCookie(cookie);
-        HttpCookie cookie2 = SolarRepo.get(getApplication()).getSessionCookie();
-        int a = 1;
     }
 }

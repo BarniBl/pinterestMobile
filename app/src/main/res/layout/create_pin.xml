@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_margin="20dp">
+    android:layout_margin="20dp"
+    android:background="@android:color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,11 +36,13 @@
         android:layout_gravity="center"
         android:gravity="center">
         <ImageView
+            android:id="@+id/create_pin_image_pin"
             android:layout_width="200dp"
             android:layout_height="300dp"
             android:layout_marginTop="10dp"
             android:background="@color/silver_gray"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:scaleType="centerCrop"/>
         <Button
             android:id="@+id/create_pin_add_image_button"
             android:layout_width="60dp"
@@ -49,12 +52,20 @@
             />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/create_pin_error_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_light"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/create_pin_name_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:errorEnabled="true"
-        android:layout_marginTop="20dp">
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"

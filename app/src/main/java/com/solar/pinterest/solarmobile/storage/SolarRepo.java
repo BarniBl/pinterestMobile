@@ -15,6 +15,7 @@ import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,6 +28,8 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
 
     private CookieStore mCookieStore;
     private SharedPreferences mSharedPreferences;
+
+    private String mCsrfToken;
 
     public static SolarRepo get(Application app) {
         if (instance == null) {
@@ -50,7 +53,7 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
-    public void getUser(int id, Listener listener) {
+    public void getUser(int id, UserListener listener) {
         mDatabase.getUser(id, listener);
     }
 
@@ -59,7 +62,17 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
-    public void getMasterUser(Listener listener) throws NoSuchElementException {
+    public void getPin(int id, OnReadListener<DBSchema.Pin> listener) {
+        mDatabase.getPin(id, listener);
+    }
+
+    @Override
+    public void putPin(DBSchema.Pin pin) {
+        mDatabase.putPin(pin);
+    }
+
+    @Override
+    public void getMasterUser(UserListener listener) throws NoSuchElementException {
         int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
         if (id == -1) {
             throw new NoSuchElementException();
@@ -92,6 +105,16 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     @Override
     public void setSessionCookie(HttpCookie cookie) {
         mCookieStore.add(URI.create(mContext.getString(R.string.backend_uri)), cookie);
+    }
+
+    @Override
+    public void setCsrfToken(String token) {
+        mCsrfToken = token;
+    }
+
+    @Override
+    public String getCsrfToken() {
+        return mCsrfToken;
     }
 
     @Override

@@ -2,6 +2,6 @@
     <string name="app_name">SolarMobile</string>
     <string name="userid_key">KEY_USERID</string>
     <string name="preferences_file_key">preferences</string>
-    <string name="backend_uri">https://solarsinrise.ru</string>
+    <string name="backend_uri">https://solarsunrise.ru/</string>
     <string name="session_cookie">session</string>
 </resources>
