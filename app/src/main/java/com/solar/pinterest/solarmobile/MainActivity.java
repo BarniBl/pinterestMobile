@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         toRegistrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+                Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
                 startActivity(intent);
             }
         });
@@ -66,18 +66,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //confirmInput(v);
                 LoginData loginData = new LoginData(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString());
-
-/*                Network.getInstance().getSolarSunriseApi().login(loginData).enqueue(new retrofit2.Callback<retrofit2.Response>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<retrofit2.Response> call, retrofit2.Response<retrofit2.Response> response) {
-                        System.out.println(response.body().toString());
-                    }
-
-                    @Override
-                    public void onFailure(retrofit2.Call<retrofit2.Response> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });*/
 
                 OkHttpClient client = new OkHttpClient();
                 Gson gson = new Gson();
@@ -104,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println(response.body().string());
                     }
                 });
+                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+                startActivity(intent);
             }
         });
     }
