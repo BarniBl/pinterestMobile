@@ -20,28 +20,22 @@ import com.solar.pinterest.solarmobile.network.models.LoginResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
+import com.solar.pinterest.solarmobile.storage.SolarDatabase;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import java.net.HttpCookie;
+
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import java.lang.reflect.Type;
-
-
-
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener{
+public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener {
     Button toRegistrationBtn;
     Button loginBtn;
 
@@ -91,10 +85,10 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                         LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
                         User user = loginResponse.body.user;
 
-                        SolarDatabase.get(getApplication()).putUser(
+                        SolarRepo.get(getApplication()).setMasterUser(
                                 new DBSchema.User(user.id, user.username, user.name, user.surname,
                                         user.email, user.age, user.status, user.avatarDir,
-                                        user.isActive, user.createdTime));
+                                        user.isActive, user.createdTime, false));
 
                         Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
                         startActivity(intent);
@@ -104,14 +98,6 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                 Network.getInstance().login(loginData, loginCallback);
             }
         });
-
-
-/*        SolarDatabase.get(getApplication()).putUser(
-                new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
-                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
-                        true, "2019-12-14 15:21")
-        );
-        SolarDatabase.get(getApplication()).getUser(129, this);*/
     }
 
     private boolean emailValidation() {
@@ -146,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
         String input = textInputEmail.getEditText().getText().toString();
         input += "\n";
         input += textInputPassword.getEditText().getText().toString();
-
 
 
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
