@@ -11,12 +11,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class YourProfileActivity extends AppCompatActivity {
 
     Button addPinsBoardsButton;
     Fragment selectedFragment;
+    CircleImageView mAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,12 @@ public class YourProfileActivity extends AppCompatActivity {
                 showSelectionBox();
             }
         });
+
+        mAvatar = findViewById(R.id.your_profile_image);
+        Glide.with(getApplicationContext())
+                .load("https://solarsunrise.ru/static/pin/d7/d76dd9d60ca86d2781308fc9a09e114e.jpg")
+//                .placeholder(R.drawable.fix_user_photo)
+                .into(mAvatar);
     }
 
     private void showSelectionBox() {
