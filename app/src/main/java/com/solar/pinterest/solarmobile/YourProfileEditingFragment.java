@@ -111,7 +111,7 @@ public class YourProfileEditingFragment extends Fragment {
         }
     }
 
-    public boolean confirmInput(View v) {
+    private boolean confirmInput(View v) {
         if (!nicknameValidation()) {
             return false;
         }
