@@ -11,6 +11,7 @@ import com.solar.pinterest.solarmobile.R;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
@@ -39,6 +40,9 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         mDatabase = SolarDatabase.get(app);
         mContext = app;
 
+        if (CookieHandler.getDefault() == null) {
+            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+        }
         mCookieStore = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
         mSharedPreferences = app.getSharedPreferences(
                 app.getString(R.string.preferences_file_key), Context.MODE_PRIVATE

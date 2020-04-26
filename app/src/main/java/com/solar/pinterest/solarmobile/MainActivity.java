@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements DBInterface.Liste
             }
         });
 
+
         test();
     }
 
@@ -101,15 +102,15 @@ public class MainActivity extends AppCompatActivity implements DBInterface.Liste
     }
 
     void test() {
-        SolarDatabase.get(getApplication()).putUser(
-                new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
+        SolarRepo.get(getApplication()).setMasterUser(
+                new DBSchema.User(2222, "Tamerlanchik", "Nameqwdqwdwq", "Sur",
                         "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
                         true, "2019-12-14 15:21", true)
         );
-        SolarDatabase.get(getApplication()).getUser(129, this);
+        SolarRepo.get(getApplication()).getMasterUser(this);
         HttpCookie cookie = new HttpCookie(getApplicationContext().getString(R.string.session_cookie), "ffwfewfef");
         SolarRepo.get(getApplication()).setSessionCookie(cookie);
         HttpCookie cookie2 = SolarRepo.get(getApplication()).getSessionCookie();
-
+        int a = 1;
     }
 }
