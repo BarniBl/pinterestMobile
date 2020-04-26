@@ -16,7 +16,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
-import com.solar.pinterest.solarmobile.network.models.LoginResponse;
+import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
@@ -29,6 +29,8 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.HttpCookie;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
         toRegistrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
+                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
                 startActivity(intent);
             }
         });
@@ -84,8 +86,20 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
-                        User user = loginResponse.body.user;
+                        ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
+                        if (!profileResponse.body.info.equals("OK")) {
+                            errorTextView.setText(profileResponse.body.info);
+                            return;
+                        }
+                        User user = profileResponse.body.user;
+                        List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
+                        for (HttpCookie cookie : cookies) {
+                            String cookieName = cookie.getName();
+                            if (cookieName.equals("session_key")) {
+                                SolarRepo.get(getApplication()).setSessionCookie(cookie);
+                                break;
+                            }
+                        }
 
                         SolarRepo.get(getApplication()).setMasterUser(
                                 new DBSchema.User(user.id, user.username, user.name, user.surname,
