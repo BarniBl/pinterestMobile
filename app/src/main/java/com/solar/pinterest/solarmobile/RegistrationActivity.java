@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -76,6 +78,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
+
                         ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
                         if (!profileResponse.body.info.equals("OK")) {
                             errorTextView.setText(profileResponse.body.info);
@@ -125,7 +128,7 @@ public class RegistrationActivity extends AppCompatActivity {
             return false;
         } else {
             textInputNickname.setError(null);
-            return  true;
+            return true;
         }
     }
 
@@ -140,7 +143,7 @@ public class RegistrationActivity extends AppCompatActivity {
             return false;
         } else {
             textInputPassword.setError(null);
-            return  true;
+            return true;
         }
     }
 
