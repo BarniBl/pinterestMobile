@@ -39,6 +39,15 @@
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"/>
 
+        <TextView
+            android:id="@+id/registration_error_text_under_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="center"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"></TextView>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registration_view_email_layout"
             android:layout_width="match_parent"
