@@ -1,25 +1,23 @@
 package com.solar.pinterest.solarmobile;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.LoginData;
+import com.solar.pinterest.solarmobile.network.models.LoginResponse;
+import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
@@ -30,7 +28,9 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener{
+
+import java.lang.reflect.Type;
+
 
 
 import okhttp3.Call;
@@ -40,10 +40,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import retrofit2.http.GET;
 
-public class MainActivity extends AppCompatActivity {
-    public static final MediaType JSON_TYPE = MediaType.parse("application/json");
+public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener{
     Button toRegistrationBtn;
     Button loginBtn;
 
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         toRegistrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+                Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
                 startActivity(intent);
             }
         });
@@ -74,58 +72,46 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                boolean flag = confirmInput(v);
-                if (flag) {
-                    Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
-                    startActivity(intent);
+                if (!confirmInput(v)) {
+                    return;
                 }
 
-                //confirmInput(v);
                 LoginData loginData = new LoginData(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString());
 
-/*                Network.getInstance().getSolarSunriseApi().login(loginData).enqueue(new retrofit2.Callback<retrofit2.Response>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<retrofit2.Response> call, retrofit2.Response<retrofit2.Response> response) {
-                        System.out.println(response.body().toString());
-                    }
-
-                    @Override
-                    public void onFailure(retrofit2.Call<retrofit2.Response> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });*/
-
-                OkHttpClient client = new OkHttpClient();
-                Gson gson = new Gson();
-                String json = gson.toJson(loginData);
-                RequestBody body = RequestBody.create(JSON_TYPE, json);
-
-                Request request = new Request.Builder()
-                        .url("https://solarsunrise.ru/api/v1/login")
-                        .method("POST", body)
-                        .build();
-
-                Log.println(Log.DEBUG, "DEBUG", json);
-                Log.println(Log.DEBUG, "DEBUG", body.toString());
-                Log.println(Log.DEBUG, "DEBUG", request.toString());
-                Log.println(Log.DEBUG, "DEBUG", request.body().toString());
-                client.newCall(request).enqueue(new Callback() {
+                Callback loginCallback = new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        e.printStackTrace();
+                        errorTextView.setText("Сервер временно недоступен");
                     }
 
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        System.out.println(response.body().string());
-                    }
-                });
+                        GsonBuilder builder = new GsonBuilder();
+                        Gson gson = builder.create();
+                        LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
+                        User user = loginResponse.body.user;
 
+                        SolarDatabase.get(getApplication()).putUser(
+                                new DBSchema.User(user.id, user.username, user.name, user.surname,
+                                        user.email, user.age, user.status, user.avatarDir,
+                                        user.isActive, user.createdTime));
+
+                        Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
+                        startActivity(intent);
+                    }
+                };
+
+                Network.getInstance().login(loginData, loginCallback);
             }
         });
 
 
-        test();
+/*        SolarDatabase.get(getApplication()).putUser(
+                new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
+                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
+                        true, "2019-12-14 15:21")
+        );
+        SolarDatabase.get(getApplication()).getUser(129, this);*/
     }
 
     private boolean emailValidation() {
