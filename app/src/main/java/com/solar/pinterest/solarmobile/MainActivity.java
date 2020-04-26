@@ -13,9 +13,12 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.SolarDatabase;
-import com.solar.pinterest.solarmobile.storage.StorageInterface;
+import com.solar.pinterest.solarmobile.storage.DBInterface;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
-public class MainActivity extends AppCompatActivity implements StorageInterface.Listener{
+import java.net.HttpCookie;
+
+public class MainActivity extends AppCompatActivity implements DBInterface.Listener{
 
     Button toRegistrationBtn;
     Button loginBtn;
@@ -50,12 +53,7 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
             }
         });
 
-        SolarDatabase.get(getApplication()).putUser(
-                new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
-                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
-                        true, "2019-12-14 15:21")
-        );
-        SolarDatabase.get(getApplication()).getUser(129, this);
+        test();
     }
 
     private boolean emailValidation() {
@@ -100,5 +98,18 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
     public void onReadUser(DBSchema.User user) {
         DBSchema.User ds = user;
         Log.d("Solar", "Got values");
+    }
+
+    void test() {
+        SolarDatabase.get(getApplication()).putUser(
+                new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
+                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
+                        true, "2019-12-14 15:21", true)
+        );
+        SolarDatabase.get(getApplication()).getUser(129, this);
+        HttpCookie cookie = new HttpCookie(getApplicationContext().getString(R.string.session_cookie), "ffwfewfef");
+        SolarRepo.get(getApplication()).setSessionCookie(cookie);
+        HttpCookie cookie2 = SolarRepo.get(getApplication()).getSessionCookie();
+
     }
 }

@@ -1,5 +1,6 @@
 package com.solar.pinterest.solarmobile.storage;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Entity;
@@ -36,9 +37,10 @@ public class DBSchema {
         private String avatar;
         private boolean active;
         private String created;
+        private boolean subscribed;
 
 
-        public User(int id, String username, String name, String surname, String email, int age, String status, String avatar, boolean active, String created) {
+        public User(int id, String username, String name, String surname, String email, int age, String status, String avatar, boolean active, String created, boolean subscribed) {
             this.id = id;
             this.username = username;
             this.name = name;
@@ -49,6 +51,7 @@ public class DBSchema {
             this.avatar = avatar;
             this.active = active;
             this.created = created;
+            this.subscribed = subscribed;
         }
 
         public int getId() {
@@ -130,5 +133,38 @@ public class DBSchema {
         public void setCreated(String created) {
             this.created = created;
         }
+
+        public boolean isSubscribed() {
+            return subscribed;
+        }
+
+        public void setSubscribed(boolean subscribed) {
+            this.subscribed = subscribed;
+        }
     }
+
+//    @Dao
+//    public interface SessionDao {
+//        @Insert
+//        void setSession(Session session);
+//        @Delete
+//        void deleteSession(Session session);
+//
+//        @Query("SELECT * FROM session")
+//        LiveData<Session> getSession();
+//    }
+//
+//    @Entity
+//    public class Session {
+//        private String key;
+//        private String value;
+//
+//        public String get() {
+//            return ;
+//        }
+//
+//        public void setId(int id) {
+//            this.id = id;
+//        }
+//    }
 }
