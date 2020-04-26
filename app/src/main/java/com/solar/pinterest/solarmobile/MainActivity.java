@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                         LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
                         User user = loginResponse.body.user;
 
-                        SolarDatabase.get(getApplication()).putUser(
+                        SolarRepo.get(getApplication()).setMasterUser(
                                 new DBSchema.User(user.id, user.username, user.name, user.surname,
                                         user.email, user.age, user.status, user.avatarDir,
                                         user.isActive, user.createdTime, false));
