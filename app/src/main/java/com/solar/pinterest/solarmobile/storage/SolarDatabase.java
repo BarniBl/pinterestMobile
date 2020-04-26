@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile.storage;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 
 public class SolarDatabase implements DBInterface {
     private static SolarDatabase INSTANCE;
@@ -18,16 +19,21 @@ public class SolarDatabase implements DBInterface {
         mUserDao = AppDatabase.get(context).getUserDao();
     }
 
-    public void getUser(int id, DBInterface.Listener listener) {
+    public void getUser(int id, DBInterface.UserListener listener) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             DBSchema.User user = mUserDao.getUser(id);
             listener.onReadUser(user);
         });
     }
 
-    public void putUser(DBSchema.User user) {
+    public void putUser(DBSchema.User user) throws SQLiteConstraintException {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            mUserDao.insert(user);
+            try{
+                mUserDao.insert(user);
+            } catch (SQLiteConstraintException e) {
+                mUserDao.delete(user);
+                mUserDao.insert(user);
+            }
         });
     }
 }

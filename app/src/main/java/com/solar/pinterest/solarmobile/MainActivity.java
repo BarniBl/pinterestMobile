@@ -31,11 +31,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener {
+    public static final MediaType JSON_TYPE = MediaType.parse("application/json");
     Button toRegistrationBtn;
     Button loginBtn;
 
@@ -45,6 +48,11 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SolarRepo.get(getApplication()).setMasterUser(
+                new DBSchema.User(12345, "Tamerlanchik", "Nameqwdqwdwq", "Sur",
+                        "aaa@ss.er", 123, "Alive", "static/pin/d7/d76dd9d60ca86d2781308fc9a09e114e.jpg",
+                        true, "2019-12-14 15:21", true)
+        );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
@@ -142,18 +150,5 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
     public void onReadUser(DBSchema.User user) {
         DBSchema.User ds = user;
         Log.d("Solar", "Got values");
-    }
-
-    void test() {
-        SolarRepo.get(getApplication()).setMasterUser(
-                new DBSchema.User(2222, "Tamerlanchik", "Nameqwdqwdwq", "Sur",
-                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
-                        true, "2019-12-14 15:21", true)
-        );
-        SolarRepo.get(getApplication()).getMasterUser(this);
-        HttpCookie cookie = new HttpCookie(getApplicationContext().getString(R.string.session_cookie), "ffwfewfef");
-        SolarRepo.get(getApplication()).setSessionCookie(cookie);
-        HttpCookie cookie2 = SolarRepo.get(getApplication()).getSessionCookie();
-        int a = 1;
     }
 }
