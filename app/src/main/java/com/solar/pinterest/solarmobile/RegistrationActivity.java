@@ -106,6 +106,15 @@ public class RegistrationActivity extends AppCompatActivity {
         input += "\n";
         input += textInputPassword.getEditText().getText().toString();
 
+        DBHelper.get(getApplicationContext()).setUser(
+                new DBSchema.User(123, "Tamer", "Name", "Sur",
+                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
+                        true, "2019-12-14 15:21")
+        );
+        Log.d("Solar", "Put values");
+        DBSchema.User user = DBHelper.get(getApplicationContext()).getUser(123);
+        Log.d("Solar", "Got values");
+
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
     }
 }

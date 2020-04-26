@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -45,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 confirmInput(v);
             }
         });
+
+        DBHelper.get(getApplicationContext()).setUser(
+                new DBSchema.User(123, "Tamer", "Name", "Sur",
+                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
+                        true, "2019-12-14 15:21")
+        );
+        Log.d("Solar", "Put values");
+        DBSchema.User user = DBHelper.get(getApplicationContext()).getUser(123);
+        Log.d("Solar", "Got values");
     }
 
     private boolean emailValidation() {
@@ -79,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         String input = textInputEmail.getEditText().getText().toString();
         input += "\n";
         input += textInputPassword.getEditText().getText().toString();
+
+
 
         Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
     }
