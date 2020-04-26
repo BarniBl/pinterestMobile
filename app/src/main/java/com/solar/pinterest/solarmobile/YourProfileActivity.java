@@ -11,12 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class YourProfileActivity extends AppCompatActivity {
 
     Button addPinsBoardsButton;
     Button settingsButton;
+    TextView errorTextYourProfile;
 
     Fragment selectedFragment;
 
@@ -24,6 +26,8 @@ public class YourProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.your_profile);
+
+        errorTextYourProfile = findViewById(R.id.your_profile_view_error_field);
 
         addPinsBoardsButton = findViewById(R.id.your_profile_buttons_plus_button);
         addPinsBoardsButton.setOnClickListener(new View.OnClickListener() {

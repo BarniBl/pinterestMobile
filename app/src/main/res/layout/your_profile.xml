@@ -84,8 +84,18 @@
             android:text="Пины"/>
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
         android:layout_below="@id/your_profile_pin_board_buttons"
+        android:id="@+id/your_profile_view_error_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_light"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
+
+    <LinearLayout
+        android:layout_below="@id/your_profile_view_error_field"
         android:layout_margin="10dp"
         android:id="@+id/your_profile_doard_pin_f_place"
         android:layout_width="match_parent"
