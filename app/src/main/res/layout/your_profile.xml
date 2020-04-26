@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/your_profile_image"
+            android:id="@+id/your_profile_view_image_field"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -30,6 +30,7 @@
             android:layout_marginRight="10dp">
 
             <TextView
+                android:id="@+id/your_profile_view_nickname_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="nickname"
@@ -37,6 +38,7 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/black"/>
             <TextView
+                android:id="@+id/your_profile_view_status_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="статус"
