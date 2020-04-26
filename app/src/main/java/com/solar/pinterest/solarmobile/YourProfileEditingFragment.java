@@ -29,6 +29,7 @@ public class YourProfileEditingFragment extends Fragment {
     ImageView avatarImage;
     ImageButton chooseAvatarButton;
     Button okSettingsButton;
+    Button exitButton;
 
     TextInputLayout textInputName;
     TextInputLayout textInputSurname;
@@ -82,6 +83,14 @@ public class YourProfileEditingFragment extends Fragment {
                     getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
                     getFragmentManager().beginTransaction().remove(YourProfileEditingFragment.this).commit();
                 }
+            }
+        });
+
+        exitButton = view.findViewById(R.id.your_profile_editing_exit_button);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // TODO
             }
         });
 
