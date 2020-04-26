@@ -29,6 +29,8 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     private CookieStore mCookieStore;
     private SharedPreferences mSharedPreferences;
 
+    private String mCsrfToken;
+
     public static SolarRepo get(Application app) {
         if (instance == null) {
             instance = new SolarRepo(app);
@@ -103,6 +105,16 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     @Override
     public void setSessionCookie(HttpCookie cookie) {
         mCookieStore.add(URI.create(mContext.getString(R.string.backend_uri)), cookie);
+    }
+
+    @Override
+    public void setCsrfToken(String token) {
+        mCsrfToken = token;
+    }
+
+    @Override
+    public String getCsrfToken() {
+        return mCsrfToken;
     }
 
     @Override

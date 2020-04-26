@@ -8,4 +8,7 @@ public interface RepositoryInterface extends DBInterface {
 
     HttpCookie getSessionCookie();
     void setSessionCookie(HttpCookie cookie);
+
+    void setCsrfToken(String token);
+    String getCsrfToken();
 }
