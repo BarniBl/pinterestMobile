@@ -50,7 +50,7 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
-    public void getUser(int id, Listener listener) {
+    public void getUser(int id, UserListener listener) {
         mDatabase.getUser(id, listener);
     }
 
@@ -59,7 +59,7 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
-    public void getMasterUser(Listener listener) throws NoSuchElementException {
+    public void getMasterUser(UserListener listener) throws NoSuchElementException {
         int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
         if (id == -1) {
             throw new NoSuchElementException();

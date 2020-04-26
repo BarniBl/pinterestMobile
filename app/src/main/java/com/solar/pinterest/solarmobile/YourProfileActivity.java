@@ -15,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.solar.pinterest.solarmobile.storage.DBInterface;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -38,10 +41,22 @@ public class YourProfileActivity extends AppCompatActivity {
         });
 
         mAvatar = findViewById(R.id.your_profile_image);
-        Glide.with(getApplicationContext())
-                .load("https://solarsunrise.ru/static/pin/d7/d76dd9d60ca86d2781308fc9a09e114e.jpg")
-//                .placeholder(R.drawable.fix_user_photo)
-                .into(mAvatar);
+        SolarRepo.get(getApplication()).getMasterUser(new DBInterface.UserListener() {
+            @Override
+            public void onReadUser(DBSchema.User user) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
+                        Glide.with(getApplicationContext())
+                            .load(path)
+                            .placeholder(R.drawable.fix_user_photo)
+                            .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+                            .into(mAvatar);
+                    }
+                });
+            }
+        });
     }
 
     private void showSelectionBox() {
