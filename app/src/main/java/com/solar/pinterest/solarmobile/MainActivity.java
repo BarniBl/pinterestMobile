@@ -19,14 +19,18 @@ import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.LoginResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
-import com.solar.pinterest.solarmobile.storage.SolarDatabase;
-import com.solar.pinterest.solarmobile.storage.StorageInterface;
+import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
+
+import java.net.HttpCookie;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
 import java.lang.reflect.Type;
+
 
 
 import okhttp3.Call;
@@ -37,7 +41,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements StorageInterface.Listener{
+public class MainActivity extends AppCompatActivity implements RepositoryInterface.Listener{
     Button toRegistrationBtn;
     Button loginBtn;
 
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
             }
         });
 
+
 /*        SolarDatabase.get(getApplication()).putUser(
                 new DBSchema.User(129, "Tamerlanchik", "Name", "Sur",
                         "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
@@ -152,5 +157,18 @@ public class MainActivity extends AppCompatActivity implements StorageInterface.
     public void onReadUser(DBSchema.User user) {
         DBSchema.User ds = user;
         Log.d("Solar", "Got values");
+    }
+
+    void test() {
+        SolarRepo.get(getApplication()).setMasterUser(
+                new DBSchema.User(2222, "Tamerlanchik", "Nameqwdqwdwq", "Sur",
+                        "aaa@ss.er", 123, "Alive", "dwe/dwedwe.jpg",
+                        true, "2019-12-14 15:21", true)
+        );
+        SolarRepo.get(getApplication()).getMasterUser(this);
+        HttpCookie cookie = new HttpCookie(getApplicationContext().getString(R.string.session_cookie), "ffwfewfef");
+        SolarRepo.get(getApplication()).setSessionCookie(cookie);
+        HttpCookie cookie2 = SolarRepo.get(getApplication()).getSessionCookie();
+        int a = 1;
     }
 }

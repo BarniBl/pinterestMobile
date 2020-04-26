@@ -2,9 +2,8 @@ package com.solar.pinterest.solarmobile.storage;
 
 import android.content.Context;
 
-public class SolarDatabase implements StorageInterface {
+public class SolarDatabase implements DBInterface {
     private static SolarDatabase INSTANCE;
-    private Context mContext;
 
     private DBSchema.UserDao mUserDao;
 
@@ -16,11 +15,10 @@ public class SolarDatabase implements StorageInterface {
     }
 
     private SolarDatabase(Context context) {
-        mContext = context;
-        mUserDao = AppDatabase.get(mContext).getUserDao();
+        mUserDao = AppDatabase.get(context).getUserDao();
     }
 
-    public void getUser(int id, StorageInterface.Listener listener) {
+    public void getUser(int id, DBInterface.Listener listener) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             DBSchema.User user = mUserDao.getUser(id);
             listener.onReadUser(user);
