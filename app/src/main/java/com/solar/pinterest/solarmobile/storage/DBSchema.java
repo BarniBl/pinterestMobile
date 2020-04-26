@@ -1,11 +1,12 @@
 package com.solar.pinterest.solarmobile.storage;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
@@ -17,12 +18,9 @@ import androidx.room.Update;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
 public class DBSchema {
     @Dao
@@ -30,17 +28,16 @@ public class DBSchema {
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         void insert(User user);
 
-        @Delete
-        void delete(User user);
-
         @Query("SELECT * FROM user WHERE id = :id")
         User getUser(int id);
 
-        @Update
-        void updateUser(User user);
+        @Query("SELECT * FROM user WHERE username = :username")
+        User getUser(String username);
     }
 
-    @Entity
+    @Entity(indices = {
+            @Index("username"),
+    })
     public static class User {
         @PrimaryKey private int id;
         private String username;
@@ -167,15 +164,21 @@ public class DBSchema {
         @Query("SELECT * FROM Pin where id = :id")
         Pin getPin(int id);
 
+        @Query("SELECT * FROM Pin where board_id = :board")
+        List<Pin> getBoardPins(int board);
+
         @Delete
         void delete(Pin pin);
     }
 
-    @Entity
+    @Entity(indices = {
+            @Index("board_id"),
+    })
     public static class Pin {
         @PrimaryKey private int id;
         private String authorUsername;
         private String ownerUsername;
+        @ColumnInfo(name = "board_id")
         private int boardId;
         @TypeConverters({TimestampConverter.class})
         private Date created;
@@ -269,17 +272,121 @@ public class DBSchema {
         }
     }
 
-    public static class TimestampConverter {
-        static final String sDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
+    @Dao
+    public interface BoardDao {
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        void insert(Board board);
+
+        @Query("SELECT * FROM Board where id = :id")
+        Board getPin(int id);
+
+        @Query("SELECT * FROM Board WHERE owner_id=:owner")
+        List<Board> getUserBoards(int owner);
+    }
+
+    @Entity(indices = {
+            @Index("owner_id"),
+    })
+    public static class Board {
+        @PrimaryKey
+        private int id;
+        private String category;
+        private boolean deleted;
+        @ColumnInfo(name = "owner_id")
+        private int ownerId;
+        private String title;
+        private String description;
+        private String preview;
+        @TypeConverters({TimestampConverter.class})
+        private Date created;
+
+        public Board(int id, String category, boolean deleted, int ownerId, String title, String description, String preview, Date created) {
+            this.id = id;
+            this.category = category;
+            this.deleted = deleted;
+            this.ownerId = ownerId;
+            this.title = title;
+            this.description = description;
+            this.preview = preview;
+            this.created = created;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public boolean isDeleted() {
+            return deleted;
+        }
+
+        public void setDeleted(boolean deleted) {
+            this.deleted = deleted;
+        }
+
+        public int getOwnerId() {
+            return ownerId;
+        }
+
+        public void setOwnerId(int ownerId) {
+            this.ownerId = ownerId;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getPreview() {
+            return preview;
+        }
+
+        public void setPreview(String preview) {
+            this.preview = preview;
+        }
+
+        public Date getCreated() {
+            return created;
+        }
+
+        public void setCreated(Date created) {
+            this.created = created;
+        }
+    }
+
+    static class TimestampConverter {
+        private static final String sDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
         @TypeConverter
         public String fromDate(Date timestamp) {
-            @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(sDateFormat);
+            DateFormat df = new SimpleDateFormat(sDateFormat);
             return df.format(timestamp);
         }
 
         @TypeConverter
         public Date toDate(String timestamp) {
-            @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(sDateFormat);
+            DateFormat df = new SimpleDateFormat(sDateFormat);
             try {
                 return df.parse(timestamp);
             } catch (ParseException e) {

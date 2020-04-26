@@ -29,6 +29,7 @@ public class YourProfileEditingFragment extends Fragment {
     ImageView avatarImage;
     ImageButton chooseAvatarButton;
     Button okSettingsButton;
+    Button exitButton;
 
     TextInputLayout textInputName;
     TextInputLayout textInputSurname;
@@ -85,6 +86,14 @@ public class YourProfileEditingFragment extends Fragment {
             }
         });
 
+        exitButton = view.findViewById(R.id.your_profile_editing_exit_button);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // TODO
+            }
+        });
+
         return view;
     }
 
@@ -111,7 +120,7 @@ public class YourProfileEditingFragment extends Fragment {
         }
     }
 
-    public boolean confirmInput(View v) {
+    private boolean confirmInput(View v) {
         if (!nicknameValidation()) {
             return false;
         }
