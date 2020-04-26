@@ -38,7 +38,6 @@ public class CreateBoardFragment extends Fragment {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CreateBoard", "Close");
                 getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
                 getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
             }
@@ -48,8 +47,11 @@ public class CreateBoardFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CreateBoard", "Ok");
                 boolean flag = confirmInput(v);
+                if (flag) {
+                    // Ваш TODO CODE
+                    getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
+                }
             }
         });
 
