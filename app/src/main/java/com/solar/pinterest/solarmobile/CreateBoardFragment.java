@@ -31,12 +31,14 @@ public class CreateBoardFragment extends Fragment {
 
         textInputTitle = view.findViewById(R.id.create_board_title_field);
         textInputDiscription = view.findViewById(R.id.create_board_description_field);
+        errorTextView = view.findViewById(R.id.create_board_error_field);
 
         closeButton = view.findViewById(R.id.create_board_close_button);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CLose", "Close");
+                Log.d("CreateBoard", "Close");
+                getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
             }
         });
 
@@ -44,8 +46,8 @@ public class CreateBoardFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CLose", "Ok");
-                confirmInput(v);
+                Log.d("CreateBoard", "Ok");
+                boolean flag = confirmInput(v);
             }
         });
 
@@ -64,15 +66,16 @@ public class CreateBoardFragment extends Fragment {
         }
     }
 
-    public void confirmInput(View v) {
+    private boolean confirmInput(View v) {
         if (!titleValidation()) {
-            return;
+            return false;
         }
 
         String input = textInputTitle.getEditText().getText().toString().trim();
         input += "\n";
         input += textInputDiscription.getEditText().getText().toString().trim();
 
-        Log.d("Close", input);
+        Log.d("CreateBoard", input);
+        return true;
     }
 }
