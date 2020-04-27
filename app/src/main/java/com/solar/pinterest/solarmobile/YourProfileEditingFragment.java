@@ -114,6 +114,9 @@ public class YourProfileEditingFragment extends Fragment {
         } else if (nicknameInput.length() < 3 || nicknameInput.length() > 30) {
             textInputNickname.setError("Длина никнейма от 3 до 30 символов");
             return false;
+        } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
+            textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
+            return false;
         } else {
             textInputNickname.setError(null);
             return  true;
