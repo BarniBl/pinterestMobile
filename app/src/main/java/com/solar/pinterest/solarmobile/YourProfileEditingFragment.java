@@ -117,10 +117,10 @@ public class YourProfileEditingFragment extends Fragment {
         } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
             textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
             return false;
-        } else {
-            textInputNickname.setError(null);
-            return  true;
         }
+
+        textInputNickname.setError(null);
+        return  true;
     }
 
     private boolean confirmInput(View v) {
