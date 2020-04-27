@@ -396,7 +396,7 @@ public class DBSchema {
             try {
                 return df.parse(timestamp);
             } catch (ParseException e) {
-                Log.e("Solar", "Cannot parse date");
+                Log.e("Solar", "Cannot parse date: " + timestamp);
                 return new Date();
             }
         }

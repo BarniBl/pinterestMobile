@@ -121,9 +121,11 @@ public class SolarDatabase implements DBInterface {
 
     @Override
     public void clear() {
-        mUserDao.clear();
-        mPinDao.clear();
-        mBoardDao.clear();
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mUserDao.clear();
+            mPinDao.clear();
+            mBoardDao.clear();
+        });
     }
 
 }
