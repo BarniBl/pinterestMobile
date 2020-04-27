@@ -128,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
         if (emailInput.isEmpty()) {
             textInputEmail.setError("Поле должно быть заполнено");
             return false;
+        } else if(!emailInput.matches("^.+@.+\\.[a-zA-Z]+$")){
+            textInputEmail.setError("Введите корректный email");
+            return false;
         } else {
             textInputEmail.setError(null);
             return true;
