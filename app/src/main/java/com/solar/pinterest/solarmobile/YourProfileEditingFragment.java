@@ -93,6 +93,8 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
             }
         });
 
+        SolarRepo.get(getActivity().getApplication()).getMasterUser(this);
+
         okSettingsButton = view.findViewById(R.id.your_profile_editing_ok_button);
         okSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override

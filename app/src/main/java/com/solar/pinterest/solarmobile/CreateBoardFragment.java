@@ -98,7 +98,7 @@ public class CreateBoardFragment extends Fragment implements RepositoryInterface
                     }
                 };
 
-                Network.getInstance().addBoard(SolarRepo.get(getActivity().getApplication()).getSessionCookie(), createBoardData, SolarRepo.get(getActivity().getApplication()).getCsrfToken(), createBoardCallback);
+
             }
         });
         return view;
