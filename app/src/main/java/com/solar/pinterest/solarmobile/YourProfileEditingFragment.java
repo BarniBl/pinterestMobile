@@ -54,7 +54,12 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
     TextInputLayout textInputSurname;
     TextInputLayout textInputNickname;
     TextInputLayout textInputStatus;
+
     TextView errorSettingsTextView;
+    TextView textName;
+    TextView textSurname;
+    TextView textNickname;
+    TextView textStatus;
 
     @Nullable
     @Override
@@ -78,6 +83,10 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
         textInputStatus = view.findViewById(R.id.your_profile_editing_status_field);
 
         errorSettingsTextView = view.findViewById(R.id.your_profile_editing_error_field);
+        textName = view.findViewById(R.id.your_profile_editing_name_field_text);
+        textSurname = view.findViewById(R.id.your_profile_editing_surname_field_text);
+        textNickname = view.findViewById(R.id.your_profile_editing_nickname_field_text);
+        textStatus = view.findViewById(R.id.your_profile_editing_status_field_text);
 
         chooseAvatarButton = view.findViewById(R.id.profile_editing_image_button);
         chooseAvatarButton.setOnClickListener(new View.OnClickListener() {
