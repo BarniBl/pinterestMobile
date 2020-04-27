@@ -1,5 +1,7 @@
 package com.solar.pinterest.solarmobile.network.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
     public int id;
     public String username;
@@ -8,8 +10,11 @@ public class User {
     public String email;
     public int age;
     public String status;
+    @SerializedName("avatar_dir")
     public String avatarDir;
+    @SerializedName("is_active")
     public boolean isActive;
+    @SerializedName("created_time")
     public String createdTime;
 
     public User(int id, String username, String name, String surname, String email, int age, String status, String avatarDir, Boolean isActive, String createdTime) {

@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                             return;
                         }
                         User user = profileResponse.body.user;
+                        Log.println(Log.DEBUG, "avatarDir", user.avatarDir);
                         List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
                         for (HttpCookie cookie : cookies) {
                             String cookieName = cookie.getName();
