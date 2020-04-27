@@ -110,9 +110,11 @@ public class RegistrationActivity extends AppCompatActivity {
         if (emailInput.isEmpty()) {
             textInputEmail.setError("Поле должно быть заполнено");
             return false;
+        } else if(!emailInput.matches("^.+@.+\\.[a-zA-Z]+$")){
+            textInputEmail.setError("Введите корректный email");
+            return false;
         } else {
             textInputEmail.setError(null);
-//            textInputEmail.setErrorEnabled(false);
             return true;
         }
     }
@@ -125,6 +127,9 @@ public class RegistrationActivity extends AppCompatActivity {
             return false;
         } else if (nicknameInput.length() < 3 || nicknameInput.length() > 30) {
             textInputNickname.setError("Длина никнейма от 3 до 30 символов");
+            return false;
+        } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
+            textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
             return false;
         } else {
             textInputNickname.setError(null);
