@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 public class YourProfileEditingFragment extends Fragment {
 
@@ -90,7 +91,10 @@ public class YourProfileEditingFragment extends Fragment {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // TODO
+                SolarRepo.get(getActivity().getApplication()).onLogout();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                getActivity().finish();
+                startActivity(intent);
             }
         });
 
@@ -117,10 +121,10 @@ public class YourProfileEditingFragment extends Fragment {
         } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
             textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
             return false;
-        } else {
-            textInputNickname.setError(null);
-            return  true;
         }
+
+        textInputNickname.setError(null);
+        return  true;
     }
 
     private boolean confirmInput(View v) {

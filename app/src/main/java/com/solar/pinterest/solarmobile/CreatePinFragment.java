@@ -139,10 +139,10 @@ public class CreatePinFragment extends Fragment {
         if (titleInput.isEmpty()) {
             textInputTitle.setError("Поле должно быть заполнено");
             return false;
-        } else {
-            textInputTitle.setError(null);
-            return true;
         }
+
+        textInputTitle.setError(null);
+        return true;
     }
 
     private boolean boardValidation() {

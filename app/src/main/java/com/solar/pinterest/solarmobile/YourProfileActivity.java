@@ -150,22 +150,22 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
 
         findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
 
-        SolarRepo.get(getApplication()).getMasterUser(new DBInterface.UserListener() {
-            @Override
-            public void onReadUser(DBSchema.User user) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
-                        Glide.with(getApplicationContext())
-                                .load(path)
-                                .placeholder(R.drawable.fix_user_photo)
-                                .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-                                .into(yourProfileAvatarImage);
-                    }
-                });
-            }
-        });
+//        SolarRepo.get(getApplication()).getMasterUser(new DBInterface.UserListener() {
+//            @Override
+//            public void onReadUser(DBSchema.User user) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
+//                        Glide.with(getApplicationContext())
+//                                .load(path)
+//                                .placeholder(R.drawable.fix_user_photo)
+//                                .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+//                                .into(yourProfileAvatarImage);
+//                    }
+//                });
+//            }
+//        });
 
     }
 

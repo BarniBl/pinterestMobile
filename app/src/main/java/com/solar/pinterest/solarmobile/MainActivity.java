@@ -129,10 +129,13 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
         if (emailInput.isEmpty()) {
             textInputEmail.setError("Поле должно быть заполнено");
             return false;
-        } else {
-            textInputEmail.setError(null);
-            return true;
+        } else if(!emailInput.matches("^.+@.+\\.[a-zA-Z]+$")){
+            textInputEmail.setError("Введите корректный email");
+            return false;
         }
+
+        textInputEmail.setError(null);
+        return true;
     }
 
     private boolean passwordValidation() {
@@ -141,10 +144,10 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
         if (passwordInput.isEmpty()) {
             textInputPassword.setError("Поле должно быть заполнено");
             return false;
-        } else {
-            textInputPassword.setError(null);
-            return true;
         }
+
+        textInputPassword.setError(null);
+        return  true;
     }
 
     public boolean confirmInput(View v) {

@@ -113,10 +113,10 @@ public class RegistrationActivity extends AppCompatActivity {
         } else if(!emailInput.matches("^.+@.+\\.[a-zA-Z]+$")){
             textInputEmail.setError("Введите корректный email");
             return false;
-        } else {
-            textInputEmail.setError(null);
-            return true;
         }
+
+        textInputEmail.setError(null);
+        return true;
     }
 
     private boolean nicknameValidation() {
@@ -131,10 +131,10 @@ public class RegistrationActivity extends AppCompatActivity {
         } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
             textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
             return false;
-        } else {
-            textInputNickname.setError(null);
-            return true;
         }
+
+        textInputNickname.setError(null);
+        return  true;
     }
 
     private boolean passwordValidation() {
@@ -146,10 +146,10 @@ public class RegistrationActivity extends AppCompatActivity {
         } else if (passwordInput.length() < 6 || passwordInput.length() > 30) {
             textInputPassword.setError("Длина никнейма от 6 до 30 символов");
             return false;
-        } else {
-            textInputPassword.setError(null);
-            return true;
         }
+
+        textInputPassword.setError(null);
+        return  true;
     }
 
     public boolean confirmInput(View v) {
