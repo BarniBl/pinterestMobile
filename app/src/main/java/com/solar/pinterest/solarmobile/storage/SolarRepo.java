@@ -148,6 +148,10 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     @Override
     public void onLogout() {
         clear();
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(mContext.getString(R.string.cookies_key));
+        editor.remove(mContext.getString(R.string.userid_key));
+        editor.commit();
     }
 
     @Override
