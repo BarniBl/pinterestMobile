@@ -2,8 +2,10 @@ package com.solar.pinterest.solarmobile.network;
 
 import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
+import com.solar.pinterest.solarmobile.network.models.User;
 
 import java.net.HttpCookie;
 
@@ -89,6 +91,23 @@ public class Network implements NetworkInterface {
         String path = "/api/v1/board";
 
         String json = this.gson.toJson(createBoardData);
+        RequestBody body = RequestBody.create(JSON_TYPE, json);
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("POST", body)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .addHeader("csrf-token", csrf)
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void editProfile(HttpCookie cookie, EditProfile profile, String csrf, Callback callbackFunc) {
+        String path = "/api/v1/board";
+
+        String json = this.gson.toJson(profile);
         RequestBody body = RequestBody.create(JSON_TYPE, json);
 
         Request request = new Request.Builder()
