@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
@@ -16,11 +17,13 @@ import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
+    private static final String TAG = "Solar.SolarRepo";
     private static SolarRepo instance;
     private SolarDatabase mDatabase;
     private Application mContext;
@@ -47,10 +50,22 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         if (CookieHandler.getDefault() == null) {
             CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
         }
-        mCookieStore = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
         mSharedPreferences = app.getSharedPreferences(
                 app.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
         );
+        mCookieStore = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
+        loadCookies();
+    }
+
+    private void loadCookies() {
+        String storedCookie = mSharedPreferences.getString(mContext.getString(R.string.cookies_key), "");
+        URI uri = URI.create(mContext.getString(R.string.cookies_key));
+        if (storedCookie == "") {
+            Log.e(TAG, "No cookie stored");
+            return;
+        }
+        setSessionCookie(new HttpCookie(mContext.getString(R.string.session_cookie), storedCookie));
+        Log.i(TAG, "Loaded " + 1 + " cookies to CookieStore");
     }
 
     @Override
@@ -108,6 +123,11 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
+    public void clear() {
+        mDatabase.clear();
+    }
+
+    @Override
     public void getMasterUser(UserListener listener) throws NoSuchElementException {
         int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
         if (id == -1) {
@@ -126,12 +146,21 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
+    public void onLogout() {
+        clear();
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(mContext.getString(R.string.cookies_key));
+        editor.remove(mContext.getString(R.string.userid_key));
+        editor.commit();
+    }
+
+    @Override
     @Nullable
     public HttpCookie getSessionCookie() {
         List<HttpCookie> cookieList = mCookieStore.get(
                 URI.create(mContext.getString(R.string.cookie_uri)));
         for(HttpCookie cookie : cookieList) {
-            if (cookie.getName() == mContext.getString(R.string.session_cookie)) {
+            if (cookie.getName().equals(mContext.getString(R.string.session_cookie))) {
                 return cookie;
             }
         }
@@ -141,6 +170,10 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     @Override
     public void setSessionCookie(HttpCookie cookie) {
         mCookieStore.add(URI.create(mContext.getString(R.string.cookie_uri)), cookie);
+
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(mContext.getString(R.string.cookies_key), cookie.getValue());
+        editor.commit();
     }
 
     @Override

@@ -19,6 +19,8 @@ public interface DBInterface {
     void putBoard(DBSchema.Board board);
     void getUserBoards(int userid, OnReadListener<List<DBSchema.Board>> listener);
 
+    void clear();
+
     interface Listener extends UserListener{
     }
 

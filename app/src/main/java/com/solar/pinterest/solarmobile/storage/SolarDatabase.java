@@ -118,4 +118,14 @@ public class SolarDatabase implements DBInterface {
             listener.call(mBoardDao.getUserBoards(userid));
         });
     }
+
+    @Override
+    public void clear() {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mUserDao.clear();
+            mPinDao.clear();
+            mBoardDao.clear();
+        });
+    }
+
 }

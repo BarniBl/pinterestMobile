@@ -114,6 +114,12 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                 Network.getInstance().login(loginData, loginCallback);
             }
         });
+
+        HttpCookie cookie = SolarRepo.get(getApplication()).getSessionCookie();
+        if (cookie != null) {
+            Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
+            startActivity(intent);
+        }
     }
 
     private boolean emailValidation() {
