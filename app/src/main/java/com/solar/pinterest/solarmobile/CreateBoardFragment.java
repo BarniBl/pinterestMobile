@@ -14,8 +14,30 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.Board;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
+import com.solar.pinterest.solarmobile.network.models.LoginData;
+import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
+import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
+import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
-public class CreateBoardFragment extends Fragment {
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.net.HttpCookie;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+public class CreateBoardFragment extends Fragment implements RepositoryInterface.Listener {
 
     Button closeButton;
     Button okButton;
@@ -48,14 +70,37 @@ public class CreateBoardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
-                if (flag) {
-                    // Ваш TODO CODE
-                    getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-                    getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
+                if (!flag) {
+                    return;
                 }
+                CreateBoardData createBoardData = new CreateBoardData(textInputTitle.getEditText().getText().toString(), textInputDiscription.getEditText().getText().toString());
+
+                Callback createBoardCallback = new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        errorTextView.setText("Сервер временно недоступен");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        GsonBuilder builder = new GsonBuilder();
+                        Gson gson = builder.create();
+                        CreateBoardResponse createBoardResponse = gson.fromJson(response.body().string(), CreateBoardResponse.class);
+                        if (!createBoardResponse.body.info.equals("data successfully saved")) {
+                            errorTextView.setText(createBoardResponse.body.info);
+                            return;
+                        }
+
+                        SolarRepo.get(getActivity().getApplication()).setCsrfToken(createBoardResponse.csrf_token);
+
+                        //getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
+                        getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
+                    }
+                };
+
+                Network.getInstance().addBoard(SolarRepo.get(getActivity().getApplication()).getSessionCookie(), createBoardData, SolarRepo.get(getActivity().getApplication()).getCsrfToken(), createBoardCallback);
             }
         });
-
         return view;
     }
 
@@ -81,5 +126,10 @@ public class CreateBoardFragment extends Fragment {
 
         Log.d("CreateBoard", input);
         return true;
+    }
+
+    @Override
+    public void onReadUser(DBSchema.User user) {
+
     }
 }

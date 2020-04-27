@@ -78,65 +78,61 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
             }
         });
 
-        try {
-            SolarRepo.get(getApplication()).getMasterUser(this);
-        } catch (Exception exception) {
+        HttpCookie cookie = SolarRepo.get(getApplication()).getSessionCookie();
+        if (cookie == null) {
+            Intent intent = new Intent(YourProfileActivity.this, MainActivity.class);
+            startActivity(intent);
+            return;
+        }
 
-            HttpCookie cookie = SolarRepo.get(getApplication()).getSessionCookie();
-            if (cookie == null) {
-                Intent intent = new Intent(YourProfileActivity.this, MainActivity.class);
-                startActivity(intent);
-                return;
+        Callback profileDataCallback = new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                errorTextYourProfile.setText("Сервер временно недоступен");
             }
 
-            Callback profileDataCallback = new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    errorTextYourProfile.setText("Сервер временно недоступен");
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
+                if (!profileResponse.body.info.equals("OK")) {
+                    errorTextYourProfile.setText(profileResponse.body.info);
+                    return;
                 }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
-                    if (!profileResponse.body.info.equals("OK")) {
-                        errorTextYourProfile.setText(profileResponse.body.info);
-                        return;
+                SolarRepo.get(getApplication()).setCsrfToken(profileResponse.csrf_token);
+                User user = profileResponse.body.user;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String path = getApplicationContext().getString(R.string.backend_uri) + user.avatarDir;
+                        Glide.with(getApplicationContext())
+                                .load(path)
+                                .placeholder(R.drawable.fix_user_photo)
+                                .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+                                .into(yourProfileAvatarImage);
                     }
-                    User user = profileResponse.body.user;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String path = getApplicationContext().getString(R.string.backend_uri) + user.avatarDir;
-                            Glide.with(getApplicationContext())
-                                    .load(path)
-                                    .placeholder(R.drawable.fix_user_photo)
-                                    .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-                                    .into(yourProfileAvatarImage);
-                        }
-                    });
-                    List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
-                    for (HttpCookie cookie : cookies) {
-                        String cookieName = cookie.getName();
-                        if (cookieName.equals("session_key")) {
-                            SolarRepo.get(getApplication()).setSessionCookie(cookie);
-                            break;
-                        }
-                    }
+                });
+//                List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
+//                for (HttpCookie cookie : cookies) {
+//                    String cookieName = cookie.getName();
+//                    if (cookieName.equals("session_key")) {
+//                        SolarRepo.get(getApplication()).setSessionCookie(cookie);
+//                        break;
+//                    }
+//                }
 
-                    SolarRepo.get(getApplication()).setMasterUser(
-                            new DBSchema.User(user.id, user.username, user.name, user.surname,
-                                    user.email, user.age, user.status, user.avatarDir,
-                                    user.isActive, TimestampConverter.toDate(user.createdTime), false));
+                SolarRepo.get(getApplication()).setMasterUser(
+                        new DBSchema.User(user.id, user.username, user.name, user.surname,
+                                user.email, user.age, user.status, user.avatarDir,
+                                user.isActive, TimestampConverter.toDate(user.createdTime), false));
 
-                    yourProfileNickname.setText(user.username);
-                    yourProfileStatus.setText(user.status);
-                }
-            };
+                yourProfileNickname.setText(user.username);
+                yourProfileStatus.setText(user.status);
+            }
+        };
 
-            Network.getInstance().profileData(cookie, profileDataCallback);
-        }
+        Network.getInstance().profileData(cookie, profileDataCallback);
 
 
         settingsButton = findViewById(R.id.your_profile_buttons_edit_button);
@@ -220,7 +216,6 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
                         .into(yourProfileAvatarImage);
             }
         });
-        Log.println(Log.DEBUG, "DEB", user.getUsername());
         yourProfileNickname.setText(user.getUsername());
         yourProfileStatus.setText(user.getStatus());
     }
@@ -232,6 +227,5 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
                 .addToBackStack(null)
                 .commit();
     }
-
 
 }
