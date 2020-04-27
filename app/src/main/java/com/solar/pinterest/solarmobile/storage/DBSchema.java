@@ -33,6 +33,9 @@ public class DBSchema {
 
         @Query("SELECT * FROM user WHERE username = :username")
         User getUser(String username);
+
+        @Query("DELETE FROM user")
+        void clear();
     }
 
     @Entity(indices = {
@@ -167,8 +170,8 @@ public class DBSchema {
         @Query("SELECT * FROM Pin where board_id = :board")
         List<Pin> getBoardPins(int board);
 
-        @Delete
-        void delete(Pin pin);
+        @Query("DELETE FROM Pin")
+        void clear();
     }
 
     @Entity(indices = {
@@ -282,6 +285,9 @@ public class DBSchema {
 
         @Query("SELECT * FROM Board WHERE owner_id=:owner")
         List<Board> getUserBoards(int owner);
+
+        @Query("DELETE FROM Board")
+        void clear();
     }
 
     @Entity(indices = {

@@ -108,6 +108,11 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
+    public void clear() {
+        mDatabase.clear();
+    }
+
+    @Override
     public void getMasterUser(UserListener listener) throws NoSuchElementException {
         int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
         if (id == -1) {
@@ -126,12 +131,17 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     }
 
     @Override
+    public void onLogout() {
+        clear();
+    }
+
+    @Override
     @Nullable
     public HttpCookie getSessionCookie() {
         List<HttpCookie> cookieList = mCookieStore.get(
                 URI.create(mContext.getString(R.string.cookie_uri)));
         for(HttpCookie cookie : cookieList) {
-            if (cookie.getName() == mContext.getString(R.string.session_cookie)) {
+            if (cookie.getName().equals(mContext.getString(R.string.session_cookie))) {
                 return cookie;
             }
         }
