@@ -32,8 +32,10 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 
+import android.widget.CheckBox;
 import android.widget.ImageView;
 
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import android.widget.Toast;
@@ -46,7 +48,6 @@ import com.solar.pinterest.solarmobile.storage.SolarRepo;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class YourProfileActivity extends AppCompatActivity implements RepositoryInterface.Listener {
-
 
     Button addPinsBoardsButton;
     Button settingsButton;
