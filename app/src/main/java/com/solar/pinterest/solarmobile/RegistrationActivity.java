@@ -99,10 +99,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String emailInput = textInputEmail.getEditText().getText().toString().trim();
 
         if (emailInput.isEmpty()) {
-            textInputEmail.setError("Поле должно быть заполнено");
+            textInputEmail.setError(getString(R.string.field_must_be_filled));
             return false;
         } else if(!emailInput.matches("^.+@.+\\.[a-zA-Z]+$")){
-            textInputEmail.setError("Введите корректный email");
+            textInputEmail.setError(getString(R.string.please_give_right_email));
             return false;
         }
 
@@ -114,13 +114,13 @@ public class RegistrationActivity extends AppCompatActivity {
         String nicknameInput = textInputNickname.getEditText().getText().toString().trim();
 
         if (nicknameInput.isEmpty()) {
-            textInputNickname.setError("Поле должно быть заполнено");
+            textInputNickname.setError(getString(R.string.field_must_be_filled));
             return false;
         } else if (nicknameInput.length() < 3 || nicknameInput.length() > 30) {
-            textInputNickname.setError("Длина никнейма от 3 до 30 символов");
+            textInputNickname.setError(getString(R.string.nickname_length_range));
             return false;
         } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
-            textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
+            textInputNickname.setError(getString(R.string.nickname_wrong_symbols));
             return false;
         }
 
@@ -132,10 +132,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String passwordInput = textInputPassword.getEditText().getText().toString().trim();
 
         if (passwordInput.isEmpty()) {
-            textInputPassword.setError("Поле должно быть заполнено");
+            textInputPassword.setError(getString(R.string.field_must_be_filled));
             return false;
         } else if (passwordInput.length() < 6 || passwordInput.length() > 30) {
-            textInputPassword.setError("Длина никнейма от 6 до 30 символов");
+            textInputPassword.setError(getString(R.string.password_length_range));
             return false;
         }
 
