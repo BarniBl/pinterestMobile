@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,11 +41,15 @@ public class RegistrationActivity extends AppCompatActivity {
     TextInputLayout textInputPassword;
     TextView errorTextView;
 
+    AuthViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration);
+
+        mViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         textInputEmail = findViewById(R.id.registration_view_email_layout);
         textInputNickname = findViewById(R.id.registration_view_nickname_layout);
@@ -61,47 +66,45 @@ public class RegistrationActivity extends AppCompatActivity {
         });
 
         registrationBtn = findViewById(R.id.registration_view_button);
-        registrationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!confirmInput(v)) {
-                    return;
-                }
-                RegistrationData registrationData = new RegistrationData(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString());
-
-                Callback registrationCallback = new Callback() {
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        errorTextView.setText("Сервер временно недоступен");
-                    }
-
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        GsonBuilder builder = new GsonBuilder();
-                        Gson gson = builder.create();
-
-                        ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
-                        if (!profileResponse.body.info.equals("OK")) {
-                            errorTextView.setText(profileResponse.body.info);
-                            return;
-                        }
-                        List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
-                        for (HttpCookie cookie : cookies) {
-                            String cookieName = cookie.getName();
-                            if (cookieName.equals("session_key")) {
-                                AuthRepo.get(getApplication()).setSessionCookie(cookie);
-                                break;
-                            }
-                        }
-
-
-                        Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
-                        startActivity(intent);
-                    }
-                };
-
-                Network.getInstance().registration(registrationData, registrationCallback);
+        registrationBtn.setOnClickListener(v -> {
+            if (!confirmInput(v)) {
+                return;
             }
+
+            RegistrationData registrationData = new RegistrationData(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString());
+
+            Callback registrationCallback = new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    errorTextView.setText("Сервер временно недоступен");
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+
+                    ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
+                    if (!profileResponse.body.info.equals("OK")) {
+                        errorTextView.setText(profileResponse.body.info);
+                        return;
+                    }
+                    List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
+                    for (HttpCookie cookie : cookies) {
+                        String cookieName = cookie.getName();
+                        if (cookieName.equals("session_key")) {
+                            AuthRepo.get(getApplication()).setSessionCookie(cookie);
+                            break;
+                        }
+                    }
+
+
+                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
+                    startActivity(intent);
+                }
+            };
+
+            Network.getInstance().registration(registrationData, registrationCallback);
         });
     }
 

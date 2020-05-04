@@ -20,7 +20,7 @@ public class YourProfileViewModel extends AndroidViewModel {
 
     public YourProfileViewModel(@NonNull Application application) {
         super(application);
-        mUserRepo = new UserRepo(getApplication());
+        mUserRepo = UserRepo.get(getApplication());
     }
 
     public LiveData<Pair<User, StatusEntity>> getMasterUser() {
