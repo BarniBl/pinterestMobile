@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -20,6 +21,7 @@ import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
+import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +34,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class RegistrationActivity extends AppCompatActivity {
+    private static final String TAG = "Solar.RegistrationActiv";
 
     Button toLoginBtn;
     Button registrationBtn;
@@ -70,41 +73,25 @@ public class RegistrationActivity extends AppCompatActivity {
             if (!confirmInput(v)) {
                 return;
             }
-
-            RegistrationData registrationData = new RegistrationData(textInputEmail.getEditText().getText().toString(), textInputPassword.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString());
-
-            Callback registrationCallback = new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    errorTextView.setText("Сервер временно недоступен");
+            LiveData<StatusEntity> authStatus = mViewModel.register(
+                    textInputEmail.getEditText().getText().toString(),
+                    textInputNickname.getEditText().getText().toString(),
+                    textInputPassword.getEditText().getText().toString()
+            );
+            authStatus.observe(RegistrationActivity.this, statusEntity -> {
+                switch (statusEntity.getStatus()) {
+                    case FAILED:
+                        errorTextView.setText(statusEntity.getMessage());
+                        break;
+                    case SUCCESS:
+                        Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
+                        startActivity(intent);
+                        break;
+                    default:
+                        Log.e(TAG, "Unexpected authStatus value: " + statusEntity.getStatus().toString());
                 }
 
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-
-                    ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
-                    if (!profileResponse.body.info.equals("OK")) {
-                        errorTextView.setText(profileResponse.body.info);
-                        return;
-                    }
-                    List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
-                    for (HttpCookie cookie : cookies) {
-                        String cookieName = cookie.getName();
-                        if (cookieName.equals("session_key")) {
-                            AuthRepo.get(getApplication()).setSessionCookie(cookie);
-                            break;
-                        }
-                    }
-
-
-                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
-                    startActivity(intent);
-                }
-            };
-
-            Network.getInstance().registration(registrationData, registrationCallback);
+            });
         });
     }
 
