@@ -1,9 +1,6 @@
 package com.solar.pinterest.solarmobile;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,14 +19,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.EventBus.Event;
+import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.network.Network;
-import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
-import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -129,7 +125,7 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
                             return;
                         }
 
-                        SolarRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
+                        AuthRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
 
                         //getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
 
@@ -137,7 +133,7 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
                     }
                 };
 
-                Network.getInstance().editProfile(SolarRepo.get(getActivity().getApplication()).getSessionCookie(), editProfile, SolarRepo.get(getActivity().getApplication()).getCsrfToken(), editProfileCallback);
+                Network.getInstance().editProfile(AuthRepo.get(getActivity().getApplication()).getSessionCookie(), editProfile, AuthRepo.get(getActivity().getApplication()).getCsrfToken(), editProfileCallback);
 
             }
         });
@@ -146,7 +142,8 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SolarRepo.get(getActivity().getApplication()).onLogout();
+                EventBus.get().emit(new Event(getString(R.string.event_logout)));
+//                AuthRepo.get(getActivity().getApplication()).logout();
                 Intent intent = new Intent(getContext(), MainActivity.class);
                 getActivity().finish();
                 startActivity(intent);

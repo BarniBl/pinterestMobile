@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import org.jetbrains.annotations.NotNull;
@@ -88,7 +89,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         for (HttpCookie cookie : cookies) {
                             String cookieName = cookie.getName();
                             if (cookieName.equals("session_key")) {
-                                SolarRepo.get(getApplication()).setSessionCookie(cookie);
+                                AuthRepo.get(getApplication()).setSessionCookie(cookie);
                                 break;
                             }
                         }

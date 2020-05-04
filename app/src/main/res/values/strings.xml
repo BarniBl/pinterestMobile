@@ -6,4 +6,5 @@
     <string name="session_cookie">session_key</string>
     <string name="cookies_key">KEY_COOKIES</string>
     <string name="cookie_uri">/</string>
+    <string name="event_logout">LOGOUT_EVENT</string>
 </resources>

@@ -23,6 +23,7 @@ import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
@@ -91,14 +92,14 @@ public class CreateBoardFragment extends Fragment implements RepositoryInterface
                             return;
                         }
 
-                        SolarRepo.get(getActivity().getApplication()).setCsrfToken(createBoardResponse.csrf_token);
+                        AuthRepo.get(getActivity().getApplication()).setCsrfToken(createBoardResponse.csrf_token);
 
                         //getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
                         getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
                     }
                 };
 
-                Network.getInstance().addBoard(SolarRepo.get(getActivity().getApplication()).getSessionCookie(), createBoardData, SolarRepo.get(getActivity().getApplication()).getCsrfToken(), createBoardCallback);
+                Network.getInstance().addBoard(AuthRepo.get(getActivity().getApplication()).getSessionCookie(), createBoardData, AuthRepo.get(getActivity().getApplication()).getCsrfToken(), createBoardCallback);
             }
         });
         return view;

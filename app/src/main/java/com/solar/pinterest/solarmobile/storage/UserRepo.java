@@ -36,7 +36,7 @@ public class UserRepo {
         mUser = new MutableLiveData<>();
     }
 
-    public LiveData<Pair<User, StatusEntity>> getProfile(HttpCookie cookie) {
+    public LiveData<Pair<User, StatusEntity>> getMasterProfile(HttpCookie cookie) {
         Network.getInstance().profileData(cookie, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

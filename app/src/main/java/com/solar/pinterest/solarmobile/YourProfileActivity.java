@@ -30,7 +30,7 @@ import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class YourProfileActivity extends AppCompatActivity implements RepositoryInterface.Listener {
+public class YourProfileActivity extends AppCompatActivity {
 
 
     Button addPinsBoardsButton;
@@ -143,22 +143,22 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
         dialog.show();
     }
 
-    @Override
-    public void onReadUser(DBSchema.User user) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
-                Glide.with(getApplicationContext())
-                        .load(path)
-                        .placeholder(R.drawable.fix_user_photo)
-                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-                        .into(yourProfileAvatarImage);
-            }
-        });
-        yourProfileNickname.setText(user.getUsername());
-        yourProfileStatus.setText(user.getStatus());
-    }
+//    @Override
+//    public void onReadUser(DBSchema.User user) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
+//                Glide.with(getApplicationContext())
+//                        .load(path)
+//                        .placeholder(R.drawable.fix_user_photo)
+//                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+//                        .into(yourProfileAvatarImage);
+//            }
+//        });
+//        yourProfileNickname.setText(user.getUsername());
+//        yourProfileStatus.setText(user.getStatus());
+//    }
 
     public void replaceFragment(Fragment fragment) {
         getSupportFragmentManager()

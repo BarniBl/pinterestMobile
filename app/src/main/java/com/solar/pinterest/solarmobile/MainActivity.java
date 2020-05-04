@@ -19,6 +19,7 @@ import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.HttpCookie;
+import java.util.EventListener;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
                         for (HttpCookie cookie : cookies) {
                             String cookieName = cookie.getName();
                             if (cookieName.equals("session_key")) {
-                                SolarRepo.get(getApplication()).setSessionCookie(cookie);
+                                AuthRepo.get(getApplication()).setSessionCookie(cookie);
                                 break;
                             }
                         }
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements RepositoryInterfa
             }
         });
 
-        HttpCookie cookie = SolarRepo.get(getApplication()).getSessionCookie();
+        HttpCookie cookie = AuthRepo.get(getApplication()).getSessionCookie();
         if (cookie != null) {
             Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
             startActivity(intent);

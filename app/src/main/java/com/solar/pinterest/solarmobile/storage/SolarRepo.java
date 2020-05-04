@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
+public class SolarRepo implements RepositoryInterface {
     private static final String TAG = "Solar.SolarRepo";
     private static SolarRepo instance;
     private UserRepo mUserRepo;
@@ -51,26 +51,26 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         mContext = app;
         mUserRepo = new UserRepo(mContext);
 
-        if (CookieHandler.getDefault() == null) {
-            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-        }
+//        if (CookieHandler.getDefault() == null) {
+//            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+//        }
         mSharedPreferences = app.getSharedPreferences(
                 app.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
         );
-        mCookieStore = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
-        loadCookies();
+//        mCookieStore = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
+//        loadCookies();
     }
 
-    private void loadCookies() {
-        String storedCookie = mSharedPreferences.getString(mContext.getString(R.string.cookies_key), "");
-        URI uri = URI.create(mContext.getString(R.string.cookies_key));
-        if (storedCookie == "") {
-            Log.e(TAG, "No cookie stored");
-            return;
-        }
-        setSessionCookie(new HttpCookie(mContext.getString(R.string.session_cookie), storedCookie));
-        Log.i(TAG, "Loaded " + 1 + " cookies to CookieStore");
-    }
+//    private void loadCookies() {
+//        String storedCookie = mSharedPreferences.getString(mContext.getString(R.string.cookies_key), "");
+//        URI uri = URI.create(mContext.getString(R.string.cookies_key));
+//        if (storedCookie == "") {
+//            Log.e(TAG, "No cookie stored");
+//            return;
+//        }
+//        setSessionCookie(new HttpCookie(mContext.getString(R.string.session_cookie), storedCookie));
+//        Log.i(TAG, "Loaded " + 1 + " cookies to CookieStore");
+//    }
 
     @Override
     public void getUser(int id, UserListener listener) {
@@ -131,14 +131,14 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         mDatabase.clear();
     }
 
-    @Override
-    public void getMasterUser(UserListener listener) throws NoSuchElementException {
-        int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
-        if (id == -1) {
-            throw new NoSuchElementException();
-        }
-        getUser(id, listener);
-    }
+//    @Override
+//    public void getMasterUser(UserListener listener) throws NoSuchElementException {
+//        int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
+//        if (id == -1) {
+//            throw new NoSuchElementException();
+//        }
+//        getUser(id, listener);
+//    }
 
     @SuppressLint("ApplySharedPref")
     @Override
@@ -149,55 +149,50 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         putUser(master);
     }
 
-    @Override
-    public void onLogout() {
-        clear();
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.remove(mContext.getString(R.string.cookies_key));
-        editor.remove(mContext.getString(R.string.userid_key));
-        editor.commit();mCookieStore.removeAll();
-    }
+//    @Override
+//    public void onLogout() {
+//        clear();
+////        SharedPreferences.Editor editor = mSharedPreferences.edit();
+////        editor.remove(mContext.getString(R.string.cookies_key));
+////        editor.remove(mContext.getString(R.string.userid_key));
+////        editor.commit();
+////        mCookieStore.removeAll();
+//    }
 
-    @Override
-    public LiveData<Pair<User, StatusEntity>> getMasterProfile() {
-        return mUserRepo.getProfile(getSessionCookie());
-    }
+//    @Override
+//    public LiveData<Pair<User, StatusEntity>> getMasterProfile() {
+//        return mUserRepo.getProfile(getSessionCookie());
+//    }
 
-    @Override
-    @Nullable
-    public HttpCookie getSessionCookie() {
-        List<HttpCookie> cookieList = mCookieStore.get(
-                URI.create(mContext.getString(R.string.cookie_uri)));
-        for(HttpCookie cookie : cookieList) {
-            if (cookie.getName().equals(mContext.getString(R.string.session_cookie))) {
-                return cookie;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void setSessionCookie(HttpCookie cookie) {
-        mCookieStore.add(URI.create(mContext.getString(R.string.cookie_uri)), cookie);
-
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(mContext.getString(R.string.cookies_key), cookie.getValue());
-        editor.commit();
-    }
-
-    @Override
-    public void setCsrfToken(String token) {
-        mCsrfToken = token;
-    }
-
-    @Override
-    public String getCsrfToken() {
-        return mCsrfToken;
-    }
-
-    @Override
-    public void onReadUser(DBSchema.User user) {
-
-    }
-
+//    @Override
+//    @Nullable
+//    public HttpCookie getSessionCookie() {
+//        List<HttpCookie> cookieList = mCookieStore.get(
+//                URI.create(mContext.getString(R.string.cookie_uri)));
+//        for(HttpCookie cookie : cookieList) {
+//            if (cookie.getName().equals(mContext.getString(R.string.session_cookie))) {
+//                return cookie;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    @Override
+//    public void setSessionCookie(HttpCookie cookie) {
+//        mCookieStore.add(URI.create(mContext.getString(R.string.cookie_uri)), cookie);
+//
+//        SharedPreferences.Editor editor = mSharedPreferences.edit();
+//        editor.putString(mContext.getString(R.string.cookies_key), cookie.getValue());
+//        editor.commit();
+//    }
+//
+//    @Override
+//    public void setCsrfToken(String token) {
+//        mCsrfToken = token;
+//    }
+//
+//    @Override
+//    public String getCsrfToken() {
+//        return mCsrfToken;
+//    }
 }

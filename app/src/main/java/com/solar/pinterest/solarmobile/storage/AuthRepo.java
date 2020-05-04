@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.solar.pinterest.solarmobile.EventBus.Event;
+import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.R;
 
 import java.net.CookieHandler;
@@ -16,7 +18,6 @@ import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class AuthRepo {
     private static final String TAG = "Solar.AuthRepo";
@@ -40,8 +41,10 @@ public class AuthRepo {
     }
 
     private AuthRepo(Application app) {
-        mDatabase = SolarDatabase.get(app);
         mContext = app;
+        EventBus.get().subscribe(new Event(mContext.getString(R.string.event_logout)), event -> logout());
+
+        mDatabase = SolarDatabase.get(app);
 
         if (CookieHandler.getDefault() == null) {
             CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
@@ -94,5 +97,16 @@ public class AuthRepo {
 
     public int getUserId() {
         return mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
+    }
+
+    public void logout() {
+        Log.e(TAG, "Clear");
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(mContext.getString(R.string.cookies_key));
+        editor.remove(mContext.getString(R.string.userid_key));
+        editor.commit();
+        mCookieStore.removeAll();
+
+        mDatabase.clear();
     }
 }

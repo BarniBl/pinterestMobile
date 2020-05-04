@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
-import com.solar.pinterest.solarmobile.storage.SolarRepo;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
 import com.solar.pinterest.solarmobile.storage.UserRepo;
 
@@ -29,6 +28,6 @@ public class YourProfileViewModel extends AndroidViewModel {
         if (cookie == null) {
             return new MutableLiveData<>(new Pair<>(null, new StatusEntity(StatusEntity.Status.EMPTY)));
         }
-        return mUserRepo.getProfile(cookie);
+        return mUserRepo.getMasterProfile(cookie);
     }
 }
