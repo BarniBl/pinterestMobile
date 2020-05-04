@@ -1,6 +1,5 @@
 package com.solar.pinterest.solarmobile;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -14,12 +13,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.solar.pinterest.solarmobile.network.models.User;
-import com.solar.pinterest.solarmobile.storage.DBSchema;
-import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarRepo;
-
-import java.net.HttpCookie;
-
 
 import android.widget.ImageView;
 
@@ -27,8 +20,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class YourProfileActivity extends AppCompatActivity {
 
@@ -42,7 +33,6 @@ public class YourProfileActivity extends AppCompatActivity {
     TextView yourProfileStatus;
 
     Fragment selectedFragment;
-    CircleImageView mAvatar;
     YourProfileViewModel mViewModel;
 
     @Override
@@ -142,23 +132,6 @@ public class YourProfileActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
-//    @Override
-//    public void onReadUser(DBSchema.User user) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
-//                Glide.with(getApplicationContext())
-//                        .load(path)
-//                        .placeholder(R.drawable.fix_user_photo)
-//                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-//                        .into(yourProfileAvatarImage);
-//            }
-//        });
-//        yourProfileNickname.setText(user.getUsername());
-//        yourProfileStatus.setText(user.getStatus());
-//    }
 
     public void replaceFragment(Fragment fragment) {
         getSupportFragmentManager()

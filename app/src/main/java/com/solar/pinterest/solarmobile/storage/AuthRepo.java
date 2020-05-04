@@ -1,5 +1,6 @@
 package com.solar.pinterest.solarmobile.storage;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -77,6 +78,7 @@ public class AuthRepo {
         return null;
     }
 
+    @SuppressLint("ApplySharedPref")
     public void setSessionCookie(HttpCookie cookie) {
         mCookieStore.add(URI.create(mContext.getString(R.string.cookie_uri)), cookie);
 
