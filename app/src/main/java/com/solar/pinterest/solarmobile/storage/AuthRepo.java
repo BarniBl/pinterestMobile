@@ -25,8 +25,6 @@ public class AuthRepo {
     private Application mContext;
     private SolarDatabase mDatabase;
 
-    private static final String USER_ID_KEY = "KEY_USERID";
-
     private CookieStore mCookieStore;
     private SharedPreferences mSharedPreferences;
 
@@ -59,7 +57,7 @@ public class AuthRepo {
     private void loadCookies() {
         String storedCookie = mSharedPreferences.getString(mContext.getString(R.string.cookies_key), "");
         URI uri = URI.create(mContext.getString(R.string.cookies_key));
-        if (storedCookie == "") {
+        if (storedCookie.isEmpty()) {
             Log.e(TAG, "No cookie stored");
             return;
         }
