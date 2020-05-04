@@ -8,7 +8,7 @@ import android.util.Pair;
 import com.solar.pinterest.solarmobile.R;
 import java.util.List;
 
-public class SolarRepo implements RepositoryInterface {
+public class SolarRepo implements DBInterface {
     private static final String TAG = "Solar.SolarRepo";
     private static SolarRepo instance;
     private SolarDatabase mDatabase;

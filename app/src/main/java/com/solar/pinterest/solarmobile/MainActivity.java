@@ -2,7 +2,6 @@ package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -16,35 +15,10 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import com.google.gson.GsonBuilder;
-import com.solar.pinterest.solarmobile.network.Network;
-import com.solar.pinterest.solarmobile.network.models.LoginData;
-import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
-import com.solar.pinterest.solarmobile.network.models.User;
-import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
-import com.solar.pinterest.solarmobile.storage.AuthRepo;
-import com.solar.pinterest.solarmobile.storage.DBSchema;
-import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
-
-import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.net.HttpCookie;
-import java.util.EventListener;
-import java.util.List;
-
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-
-import static com.solar.pinterest.solarmobile.storage.StatusEntity.*;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Solar.MainActivity";

@@ -25,8 +25,8 @@ import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
+import com.solar.pinterest.solarmobile.storage.DBInterface;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
-import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class YourProfileEditingFragment extends Fragment implements RepositoryInterface.Listener{
+public class YourProfileEditingFragment extends Fragment implements DBInterface.Listener{
 
     public static final int PICK_IMAGE = 1;
 
