@@ -2,7 +2,7 @@ package com.solar.pinterest.solarmobile.network.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class User extends ModelStatefull {
     public int id;
     public String username;
     public String name;

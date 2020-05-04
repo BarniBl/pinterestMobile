@@ -8,8 +8,10 @@ import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 
 import com.solar.pinterest.solarmobile.R;
+import com.solar.pinterest.solarmobile.network.models.User;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -25,6 +27,7 @@ import java.util.NoSuchElementException;
 public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     private static final String TAG = "Solar.SolarRepo";
     private static SolarRepo instance;
+    private UserRepo mUserRepo;
     private SolarDatabase mDatabase;
     private Application mContext;
 
@@ -46,6 +49,7 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
     private SolarRepo(Application app) {
         mDatabase = SolarDatabase.get(app);
         mContext = app;
+        mUserRepo = new UserRepo(mContext);
 
         if (CookieHandler.getDefault() == null) {
             CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
@@ -152,6 +156,11 @@ public class SolarRepo implements DBInterface.Listener, RepositoryInterface {
         editor.remove(mContext.getString(R.string.cookies_key));
         editor.remove(mContext.getString(R.string.userid_key));
         editor.commit();mCookieStore.removeAll();
+    }
+
+    @Override
+    public LiveData<Pair<User, StatusEntity>> getMasterProfile() {
+        return mUserRepo.getProfile(getSessionCookie());
     }
 
     @Override
