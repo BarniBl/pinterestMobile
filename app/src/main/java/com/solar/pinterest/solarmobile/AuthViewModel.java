@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -12,6 +13,8 @@ import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.EventBus.EventListener;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
+
+import java.util.Objects;
 
 public class AuthViewModel extends AndroidViewModel {
     private static final String TAG = "Solar.AuthViewModel";
@@ -43,6 +46,12 @@ public class AuthViewModel extends AndroidViewModel {
         mCurrentLogin = login;
         mAuthStatus = mAuthRepo.login(login, password);
         return mAuthStatus;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        Log.e(TAG, "onCleared()");
     }
 
     public LiveData<StatusEntity> register(@NonNull String login, @NonNull String nick, @NonNull String password) {

@@ -126,7 +126,7 @@ public class AuthRepo {
     }
 
     public MutableLiveData<StatusEntity> login(@NonNull String login, @NonNull String password) {
-        MutableLiveData<StatusEntity> mAuthProgress = new MutableLiveData<>();
+        MutableLiveData<StatusEntity> mAuthProgress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
 
         LoginData loginData = new LoginData(login, password);
         Network.getInstance().login(loginData, getAuthResponseCallback(mAuthProgress));
@@ -135,7 +135,7 @@ public class AuthRepo {
     }
 
     public MutableLiveData<StatusEntity> register(@NonNull String login, @NonNull String nick, @NonNull String password) {
-        MutableLiveData<StatusEntity> authProgress = new MutableLiveData<>();
+        MutableLiveData<StatusEntity> authProgress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
 
         RegistrationData registrationData = new RegistrationData(login, password, nick);
         Network.getInstance().registration(registrationData, getAuthResponseCallback(authProgress));
