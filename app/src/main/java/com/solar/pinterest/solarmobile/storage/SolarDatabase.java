@@ -5,10 +5,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Pair;
 
+import com.solar.pinterest.solarmobile.EventBus.Event;
+import com.solar.pinterest.solarmobile.EventBus.EventBus;
+import com.solar.pinterest.solarmobile.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import kotlin.jvm.internal.Lambda;
 
 public class SolarDatabase implements DBInterface {
     private static SolarDatabase INSTANCE;
@@ -25,6 +28,9 @@ public class SolarDatabase implements DBInterface {
     }
 
     private SolarDatabase(Context context) {
+        EventBus.get().subscribe(new Event(context.getString(R.string.event_logout)), event -> {
+            clear();
+        });
         mUserDao = AppDatabase.get(context).getUserDao();
         mPinDao = AppDatabase.get(context).getPinDao();
         mBoardDao = AppDatabase.get(context).getBoardDao();
