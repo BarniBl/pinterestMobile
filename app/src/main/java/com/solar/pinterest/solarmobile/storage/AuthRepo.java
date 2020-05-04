@@ -125,7 +125,7 @@ public class AuthRepo {
         return getSessionCookie() != null;
     }
 
-    public MutableLiveData<StatusEntity> login(@NonNull String login, @NonNull String password) {
+    public LiveData<StatusEntity> login(@NonNull String login, @NonNull String password) {
         MutableLiveData<StatusEntity> mAuthProgress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
 
         LoginData loginData = new LoginData(login, password);

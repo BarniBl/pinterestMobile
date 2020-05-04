@@ -53,6 +53,20 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.registration);
 
         mViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        mViewModel.getAuthStatus().observe(this, statusEntity -> {
+            switch (statusEntity.getStatus()) {
+                case FAILED:
+                    errorTextView.setText(statusEntity.getMessage());
+                    break;
+                case SUCCESS:
+                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
+                    startActivity(intent);
+                    break;
+                default:
+                    Log.e(TAG, "Unexpected authStatus value: " + statusEntity.getStatus().toString());
+            }
+
+        });
 
         textInputEmail = findViewById(R.id.registration_view_email_layout);
         textInputNickname = findViewById(R.id.registration_view_nickname_layout);
@@ -73,25 +87,11 @@ public class RegistrationActivity extends AppCompatActivity {
             if (!confirmInput(v)) {
                 return;
             }
-            LiveData<StatusEntity> authStatus = mViewModel.register(
+            mViewModel.register(
                     textInputEmail.getEditText().getText().toString(),
                     textInputNickname.getEditText().getText().toString(),
                     textInputPassword.getEditText().getText().toString()
             );
-            authStatus.observe(RegistrationActivity.this, statusEntity -> {
-                switch (statusEntity.getStatus()) {
-                    case FAILED:
-                        errorTextView.setText(statusEntity.getMessage());
-                        break;
-                    case SUCCESS:
-                        Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
-                        startActivity(intent);
-                        break;
-                    default:
-                        Log.e(TAG, "Unexpected authStatus value: " + statusEntity.getStatus().toString());
-                }
-
-            });
         });
     }
 

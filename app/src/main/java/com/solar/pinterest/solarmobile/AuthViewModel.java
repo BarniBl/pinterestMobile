@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.solar.pinterest.solarmobile.EventBus.Event;
@@ -24,7 +25,7 @@ public class AuthViewModel extends AndroidViewModel {
     private String mCurrentNickname;
     private AuthRepo mAuthRepo;
 
-    private MutableLiveData<StatusEntity> mAuthStatus;
+    private MediatorLiveData<StatusEntity> mAuthStatus = new MediatorLiveData<>();
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
@@ -36,6 +37,7 @@ public class AuthViewModel extends AndroidViewModel {
                 mAuthStatus.postValue(new StatusEntity(StatusEntity.Status.NO_PERMISSION));
             }
         });
+        mAuthStatus.setValue(new StatusEntity(StatusEntity.Status.EMPTY));
     }
 
     public LiveData<StatusEntity> login(@NonNull String login, @NonNull String password) {
@@ -44,8 +46,26 @@ public class AuthViewModel extends AndroidViewModel {
             return mAuthStatus;
         }
         mCurrentLogin = login;
-        mAuthStatus = mAuthRepo.login(login, password);
+        mAuthStatus.postValue(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
+        resendProgress(mAuthRepo.login(login, password));
         return mAuthStatus;
+    }
+
+    public LiveData<StatusEntity> getAuthStatus() {
+        return mAuthStatus;
+    }
+
+    private void resendProgress(final LiveData<StatusEntity> repoProgress) {
+        mAuthStatus.addSource(repoProgress, status -> {
+            switch (status.getStatus()) {
+                case FAILED:
+                case SUCCESS:
+                    mAuthStatus.postValue(status);
+                    mAuthStatus.removeSource(repoProgress);
+                    break;
+                default:
+            }
+        });
     }
 
     @Override
@@ -62,7 +82,10 @@ public class AuthViewModel extends AndroidViewModel {
         }
         mCurrentLogin = login;
         mCurrentNickname = nick;
-        mAuthStatus = mAuthRepo.register(login, nick, password);
+        mAuthStatus.postValue(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
+        resendProgress(mAuthRepo.register(login, nick, password));
+
+
         return mAuthStatus;
     }
 

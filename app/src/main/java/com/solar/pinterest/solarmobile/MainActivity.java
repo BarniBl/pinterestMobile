@@ -37,6 +37,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login);
 
         mViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        mViewModel.getAuthStatus().observe(MainActivity.this, statusEntity -> {
+            switch (statusEntity.getStatus()) {
+                case FAILED:
+                    errorTextView.setText(statusEntity.getMessage());
+                    break;
+                case SUCCESS:
+                    Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
+                    startActivity(intent);
+                    break;
+                default:
+                    Log.e(TAG, "Unexpected authStatus value: " + statusEntity.getStatus().toString());
+            }
+
+        });
 
         textInputEmail = findViewById(R.id.login_view_email_layout);
         textInputPassword = findViewById(R.id.login_view_password_layout);
@@ -53,24 +67,10 @@ public class MainActivity extends AppCompatActivity {
             if (!confirmInput(v)) {
                 return;
             }
-            LiveData<StatusEntity> authStatus = mViewModel.login(
+            mViewModel.login(
                     textInputEmail.getEditText().getText().toString(),
                     textInputPassword.getEditText().getText().toString()
             );
-            authStatus.observe(MainActivity.this, statusEntity -> {
-                switch (statusEntity.getStatus()) {
-                    case FAILED:
-                        errorTextView.setText(statusEntity.getMessage());
-                        break;
-                    case SUCCESS:
-                        Intent intent = new Intent(MainActivity.this, YourProfileActivity.class);
-                        startActivity(intent);
-                        break;
-                    default:
-                        Log.e(TAG, "Unexpected authStatus value: " + statusEntity.getStatus().toString());
-                }
-
-            });
         });
 
         if (mViewModel.isAuthorized()) {
