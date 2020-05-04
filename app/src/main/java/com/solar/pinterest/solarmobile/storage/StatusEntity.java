@@ -40,5 +40,9 @@ public class StatusEntity{
         IN_PROGRESS,
         SUCCESS,
         FAILED,
+        TIMEOUT,
+        EXISTS,
+        NOT_EXISTS,
+        NO_PERMISSION,
     }
 }
