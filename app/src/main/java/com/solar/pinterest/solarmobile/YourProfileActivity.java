@@ -65,18 +65,16 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
             }
         });
 
-        HttpCookie cookie = SolarRepo.get(getApplication()).getSessionCookie();
-        if (cookie == null) {
-            Intent intent = new Intent(YourProfileActivity.this, MainActivity.class);
-            startActivity(intent);
-            return;
-        }
-
         // load profile
         LiveData<Pair<User, StatusEntity>> liveUser = mViewModel.getMasterUser();
         liveUser.observe(this, pair -> {
             if (pair.second.getStatus() == StatusEntity.Status.FAILED) {
                 errorTextYourProfile.setText(pair.second.getMessage());
+                return;
+            } else if(pair.second.getStatus() == StatusEntity.Status.EMPTY) {
+                Intent intent = new Intent(YourProfileActivity.this, MainActivity.class);
+                startActivity(intent);
+                return;
             }
             if (pair.second.getStatus() != StatusEntity.Status.SUCCESS) {
                 return;
@@ -94,55 +92,6 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
             yourProfileNickname.setText(user.username);
             yourProfileStatus.setText(user.status);
         });
-//        Callback profileDataCallback = new Callback() {
-//            @Override
-//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                errorTextYourProfile.setText("Сервер временно недоступен");
-//            }
-//
-//            @Override
-//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                GsonBuilder builder = new GsonBuilder();
-//                Gson gson = builder.create();
-//                ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
-//                if (!profileResponse.body.info.equals("OK")) {
-//                    errorTextYourProfile.setText(profileResponse.body.info);
-//                    return;
-//                }
-//                SolarRepo.get(getApplication()).setCsrfToken(profileResponse.csrf_token);
-//                User user = profileResponse.body.user;
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        String path = getApplicationContext().getString(R.string.backend_uri) + user.avatarDir;
-//                        Glide.with(getApplicationContext())
-//                                .load(path)
-//                                .placeholder(R.drawable.fix_user_photo)
-//                                .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-//                                .into(yourProfileAvatarImage);
-//                    }
-//                });
-////                List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
-////                for (HttpCookie cookie : cookies) {
-////                    String cookieName = cookie.getName();
-////                    if (cookieName.equals("session_key")) {
-////                        SolarRepo.get(getApplication()).setSessionCookie(cookie);
-////                        break;
-////                    }
-////                }
-//
-//                SolarRepo.get(getApplication()).setMasterUser(
-//                        new DBSchema.User(user.id, user.username, user.name, user.surname,
-//                                user.email, user.age, user.status, user.avatarDir,
-//                                user.isActive, TimestampConverter.toDate(user.createdTime), false));
-//
-//                yourProfileNickname.setText(user.username);
-//                yourProfileStatus.setText(user.status);
-//            }
-//        };
-//
-//        Network.getInstance().profileData(cookie, profileDataCallback);
-
 
         settingsButton = findViewById(R.id.your_profile_buttons_edit_button);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -154,24 +103,6 @@ public class YourProfileActivity extends AppCompatActivity implements Repository
         });
 
         findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-
-//        SolarRepo.get(getApplication()).getMasterUser(new DBInterface.UserListener() {
-//            @Override
-//            public void onReadUser(DBSchema.User user) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        String path = getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
-//                        Glide.with(getApplicationContext())
-//                                .load(path)
-//                                .placeholder(R.drawable.fix_user_photo)
-//                                .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-//                                .into(yourProfileAvatarImage);
-//                    }
-//                });
-//            }
-//        });
-
     }
 
     private void showSelectionBox() {

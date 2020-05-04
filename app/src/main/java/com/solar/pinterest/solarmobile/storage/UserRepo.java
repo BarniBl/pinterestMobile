@@ -26,15 +26,17 @@ import okhttp3.Response;
 
 public class UserRepo {
     private Application mContext;
+    private SolarDatabase mDatabase;
 
     private MutableLiveData<Pair<User, StatusEntity>> mUser;
 
     public UserRepo(Application context) {
         mContext = context;
+        mDatabase = SolarDatabase.get(context);
         mUser = new MutableLiveData<>();
     }
 
-    LiveData<Pair<User, StatusEntity>> getProfile(HttpCookie cookie) {
+    public LiveData<Pair<User, StatusEntity>> getProfile(HttpCookie cookie) {
         Network.getInstance().profileData(cookie, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -56,14 +58,14 @@ public class UserRepo {
                     )));
                     return;
                 }
-                SolarRepo.get(mContext).setCsrfToken(profileResponse.csrf_token);
+                AuthRepo.get(mContext).setCsrfToken(profileResponse.csrf_token);
                 User user = profileResponse.body.user;
                 mUser.postValue(new Pair<>(user, new StatusEntity(
                         StatusEntity.Status.SUCCESS
                 )));
 
 
-                SolarRepo.get(mContext).setMasterUser(
+                mDatabase.putUser(
                         new DBSchema.User(user.id, user.username, user.name, user.surname,
                                 user.email, user.age, user.status, user.avatarDir,
                                 user.isActive, TimestampConverter.toDate(user.createdTime), false));
