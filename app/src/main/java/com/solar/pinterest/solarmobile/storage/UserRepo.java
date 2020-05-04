@@ -73,13 +73,6 @@ public class UserRepo {
                 mUser.postValue(new Pair<>(user, new StatusEntity(
                         StatusEntity.Status.SUCCESS
                 )));
-
-
-
-//                mDatabase.putUser(
-//                        new DBSchema.User(user.id, user.username, user.name, user.surname,
-//                                user.email, user.age, user.status, user.avatarDir,
-//                                user.isActive, TimestampConverter.toDate(user.createdTime), false));
             }
         });
 

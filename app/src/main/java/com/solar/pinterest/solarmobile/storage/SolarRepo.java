@@ -12,9 +12,6 @@ public class SolarRepo implements RepositoryInterface {
     private static final String TAG = "Solar.SolarRepo";
     private static SolarRepo instance;
     private SolarDatabase mDatabase;
-    private Application mContext;
-
-    private SharedPreferences mSharedPreferences;
 
     public static SolarRepo get(Application app) {
         if (instance == null) {
@@ -26,11 +23,6 @@ public class SolarRepo implements RepositoryInterface {
 
     private SolarRepo(Application app) {
         mDatabase = SolarDatabase.get(app);
-        mContext = app;
-
-        mSharedPreferences = app.getSharedPreferences(
-                app.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        );
     }
 
     @Override
@@ -90,15 +82,6 @@ public class SolarRepo implements RepositoryInterface {
     @Override
     public void clear() {
         mDatabase.clear();
-    }
-
-    @SuppressLint("ApplySharedPref")
-    @Override
-    public void setMasterUser(DBSchema.User master) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putInt(mContext.getString(R.string.userid_key), master.getId());
-        editor.commit();
-        putUser(master);
     }
 
 }
