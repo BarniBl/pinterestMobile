@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 
-public class YourProfileActivity extends AppCompatActivity {
+public class YourProfileActivity extends AppCompatActivity implements RepositoryInterface.Listener {
 
     Fragment selectedFragment;
 
@@ -25,7 +25,7 @@ public class YourProfileActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
-
+    
     // Для не разрешения вернуться назад по кнопке на телефоне
     @Override
     public void onBackPressed() {

@@ -19,9 +19,28 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
+import com.solar.pinterest.solarmobile.network.models.EditProfile;
+import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
+import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
+import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
-public class YourProfileEditingFragment extends Fragment {
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+public class YourProfileEditingFragment extends Fragment implements RepositoryInterface.Listener{
 
     public static final int PICK_IMAGE = 1;
 
@@ -87,9 +106,37 @@ public class YourProfileEditingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
-                if (flag) {
-                    replaceFragment();
+
+                if (!flag) {
+                    return;
                 }
+
+                EditProfile editProfile = new EditProfile(textInputName.getEditText().getText().toString(), textInputSurname.getEditText().getText().toString(), textInputStatus.getEditText().getText().toString());
+
+                Callback editProfileCallback = new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        errorSettingsTextView.setText("Сервер временно недоступен");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        GsonBuilder builder = new GsonBuilder();
+                        Gson gson = builder.create();
+                        EditProfileResponse editProfileResponse = gson.fromJson(response.body().string(), EditProfileResponse.class);
+                        if (!editProfileResponse.body.info.equals("data successfully saved")) {
+                            errorSettingsTextView.setText(editProfileResponse.body.info);
+                            return;
+                        }
+
+                        SolarRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
+
+                        replaceFragment();
+                    }
+                };
+
+                Network.getInstance().editProfile(SolarRepo.get(getActivity().getApplication()).getSessionCookie(), editProfile, SolarRepo.get(getActivity().getApplication()).getCsrfToken(), editProfileCallback);
+
             }
         });
 
@@ -97,7 +144,10 @@ public class YourProfileEditingFragment extends Fragment {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // TODO
+                SolarRepo.get(getActivity().getApplication()).onLogout();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                getActivity().finish();
+                startActivity(intent);
             }
         });
 
@@ -105,10 +155,9 @@ public class YourProfileEditingFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && data != null) {
-           avatarImage.setImageURI(data.getData());
+            avatarImage.setImageURI(data.getData());
         }
     }
 
@@ -127,7 +176,7 @@ public class YourProfileEditingFragment extends Fragment {
         }
 
         textInputNickname.setError(null);
-        return  true;
+        return true;
     }
 
     private boolean confirmInput(View v) {
@@ -154,5 +203,23 @@ public class YourProfileEditingFragment extends Fragment {
                 .replace(R.id.your_profile_view_relativeLayout, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+  
+    @Override
+    public void onReadUser(DBSchema.User user) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
+                Glide.with(getActivity().getApplicationContext())
+                        .load(path)
+                        .placeholder(R.drawable.fix_user_photo)
+                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+                        .into(avatarImage);
+            }
+        });
+        //textInputName. setText(user.getUsername());
+        //textInputSurname.setText(user.getStatus());
+        //textInputStatus.
     }
 }
