@@ -47,8 +47,7 @@ public class YourProfileEditingFragment extends Fragment {
         closeSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-                getFragmentManager().beginTransaction().remove(YourProfileEditingFragment.this).commit();
+                replaceFragment();
             }
         });
 
@@ -80,8 +79,7 @@ public class YourProfileEditingFragment extends Fragment {
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
                 if (flag) {
-                    getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-                    getFragmentManager().beginTransaction().remove(YourProfileEditingFragment.this).commit();
+                    replaceFragment();
                 }
             }
         });
@@ -138,5 +136,14 @@ public class YourProfileEditingFragment extends Fragment {
 
         Log.d("ProfileEditing", input);
         return true;
+    }
+
+    public void replaceFragment() {
+        Fragment fragment = new YourProfileFragment();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.your_profile_view_relativeLayout, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
