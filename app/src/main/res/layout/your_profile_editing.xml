@@ -74,6 +74,7 @@
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/your_profile_editing_name_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Имя"
@@ -88,6 +89,7 @@
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/your_profile_editing_surname_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Фамилия"
@@ -102,6 +104,7 @@
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/your_profile_editing_nickname_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Никнейм"
@@ -116,6 +119,7 @@
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/your_profile_editing_status_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Статус"
