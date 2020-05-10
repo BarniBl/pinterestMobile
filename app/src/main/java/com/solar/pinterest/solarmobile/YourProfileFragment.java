@@ -13,8 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class YourProfileFragment extends Fragment {
-    
+
     Button addPinsBoardsButton;
     Button settingsButton;
     TextView errorTextYourProfile;
@@ -30,6 +32,9 @@ public class YourProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.your_profile_fragment, container, false);
         getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
+
+        BottomNavigationView bottomNavBar = getActivity().findViewById(R.id.your_profile_bottom_navigation);
+        bottomNavBar.getMenu().getItem(2).setChecked(true);
 
         errorTextYourProfile = view.findViewById(R.id.your_profile_view_error_field);
 
