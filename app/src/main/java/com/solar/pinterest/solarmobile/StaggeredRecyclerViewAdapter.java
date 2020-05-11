@@ -14,19 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<StaggeredRecyclerViewAdapter.ViewHolder> {
 
     String tagForTest = "recyclerAdapter";
 
-    private ArrayList<String> pinTitles = new ArrayList<>();
-    private ArrayList<String> pinImagesUrls = new ArrayList<>();
+    private List<DataSourse.DataItem> dataForList;
     private Context pinContext;
 
-    public StaggeredRecyclerViewAdapter(Context context, ArrayList<String> titles, ArrayList<String> imagesUrls) {
-        pinTitles = titles;
-        pinImagesUrls = imagesUrls;
+    public StaggeredRecyclerViewAdapter(Context context, List<DataSourse.DataItem> nData) {
+        dataForList = nData;
         pinContext = context;
     }
 
@@ -42,29 +40,29 @@ public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<Staggered
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d(tagForTest, "-----called");
 
-        holder.title.setText(pinTitles.get(position));
+        holder.title.setText(dataForList.get(position).title);
 
-        if (pinTitles.get(position) == "") {
+        if (dataForList.get(position).title == "") {
             holder.title.setVisibility(View.GONE);
         }
 
         Glide.with(pinContext)
-                .load(pinImagesUrls.get(position))
-                .placeholder(R.drawable.logo)
+                .load(dataForList.get(position).imageUrl)
+                .placeholder(R.color.silver_gray)
                 .into(holder.image);
 
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(tagForTest, "click" + pinTitles.get(position));
-                Toast.makeText(pinContext, pinTitles.get(position), Toast.LENGTH_SHORT).show();
+                Log.d(tagForTest, "click" + dataForList.get(position).title);
+                Toast.makeText(pinContext, dataForList.get(position).title, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return pinImagesUrls.size();
+        return dataForList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -73,8 +71,8 @@ public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<Staggered
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = (ImageView)itemView.findViewById(R.id.pin_card_view_for_list_image);
-            title = (TextView)itemView.findViewById(R.id.pin_card_view_for_list_text);
+            image = itemView.findViewById(R.id.pin_card_view_for_list_image);
+            title = itemView.findViewById(R.id.pin_card_view_for_list_text);
         }
     }
 }
