@@ -1,4 +1,4 @@
-package com.solar.pinterest.solarmobile;
+package com.solar.pinterest.solarmobile.adapter;
 
 import java.util.ArrayList;
 import java.util.List;

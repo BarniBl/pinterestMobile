@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import java.util.ArrayList;
+import com.solar.pinterest.solarmobile.adapter.DataSourse;
+import com.solar.pinterest.solarmobile.adapter.StaggeredRecyclerViewAdapter;
 
 public class IndexPageFragment extends Fragment {
 

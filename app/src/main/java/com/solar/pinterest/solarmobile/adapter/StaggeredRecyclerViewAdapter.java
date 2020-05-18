@@ -1,6 +1,7 @@
-package com.solar.pinterest.solarmobile;
+package com.solar.pinterest.solarmobile.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.solar.pinterest.solarmobile.PinViewFragment;
+import com.solar.pinterest.solarmobile.R;
 
 import java.util.List;
 
 public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<StaggeredRecyclerViewAdapter.ViewHolder> {
 
     String tagForTest = "recyclerAdapter";
+    String KEY_ID = "id";
 
     private List<DataSourse.DataItem> dataForList;
     private Context pinContext;
@@ -56,6 +61,19 @@ public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<Staggered
             public void onClick(View v) {
                 Log.d(tagForTest, "click" + dataForList.get(position).title);
                 Toast.makeText(pinContext, dataForList.get(position).title, Toast.LENGTH_SHORT).show();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(KEY_ID, dataForList.get(position).id);
+
+                PinViewFragment pinViewFragment = new PinViewFragment();
+                pinViewFragment.setArguments(bundle);
+
+                AppCompatActivity activity = (AppCompatActivity)v.getContext();
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.your_profile_view_relativeLayout, pinViewFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
