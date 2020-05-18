@@ -50,4 +50,6 @@ public class IndexPageFragment extends Fragment {
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         recyclerView.setAdapter(staggeredRecyclerViewAdapter);
     }
+    // R.layout.pin_card_view_for_list
+    // PinViewFragment()
 }

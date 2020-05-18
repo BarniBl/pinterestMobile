@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.solar.pinterest.solarmobile.adapter.DataSourse;
+import com.solar.pinterest.solarmobile.profileFragments.ProfileBoardsListFragment;
+import com.solar.pinterest.solarmobile.profileFragments.ProfilePinsListFragment;
 
 public class YourProfileFragment extends Fragment {
 
@@ -27,11 +30,21 @@ public class YourProfileFragment extends Fragment {
 
     Fragment selectedFragment;
 
+    private DataSourse dataForPins = new DataSourse();
+    private DataSourse dataForBoards = new DataSourse();
+
+    Button openPinsBtn;
+    Button openBoardsBtn;
+
+    private int forPinsBoardsPlace = R.id.your_profile_doard_pin_f_place;
+    private int placeForChangeFragment = R.id.your_profile_view_relativeLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.your_profile_fragment, container, false);
         getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
+
+        showBoards();
 
         BottomNavigationView bottomNavBar = getActivity().findViewById(R.id.your_profile_bottom_navigation);
         bottomNavBar.getMenu().getItem(2).setChecked(true);
@@ -55,7 +68,23 @@ public class YourProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 selectedFragment = new YourProfileEditingFragment();
-                replaceFragment(selectedFragment);
+                replaceFragment(selectedFragment, placeForChangeFragment);
+            }
+        });
+
+        openBoardsBtn = view.findViewById(R.id.your_profile_buttons_board_button);
+        openBoardsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBoards();
+            }
+        });
+
+        openPinsBtn = view.findViewById(R.id.your_profile_buttons_pin_button);
+        openPinsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPins();
             }
         });
 
@@ -83,7 +112,7 @@ public class YourProfileFragment extends Fragment {
                 dialog.dismiss();
 
                 selectedFragment = new CreateBoardFragment();
-                replaceFragment(selectedFragment);
+                replaceFragment(selectedFragment, placeForChangeFragment);
             }
         });
 
@@ -93,18 +122,37 @@ public class YourProfileFragment extends Fragment {
                 dialog.dismiss();
 
                 selectedFragment = new CreatePinFragment();
-                replaceFragment(selectedFragment);
+                replaceFragment(selectedFragment, placeForChangeFragment);
             }
         });
 
         dialog.show();
     }
 
-    public void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment, int placeId) {
+        assert getFragmentManager() != null;
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.your_profile_view_relativeLayout, fragment)
+                .replace(placeId, fragment)
                 .addToBackStack(null)
                 .commit();
     }
+
+    private void showBoards() {
+        selectedFragment = new ProfileBoardsListFragment();
+        replaceFragment(selectedFragment, forPinsBoardsPlace);
+    }
+
+    private void showPins() {
+        selectedFragment = new ProfilePinsListFragment();
+        replaceFragment(selectedFragment, forPinsBoardsPlace);
+    }
+//
+//    public void getBoards() {
+//
+//    }
+//
+//    public void getPins() {
+//
+//    }
 }

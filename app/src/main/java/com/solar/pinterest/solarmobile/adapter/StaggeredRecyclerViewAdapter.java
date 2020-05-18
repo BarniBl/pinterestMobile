@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +28,8 @@ public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<Staggered
 
     private List<DataSourse.DataItem> dataForList;
     private Context pinContext;
+//    private int layoutId;
+//    private Fragment itemFragment;
 
     public StaggeredRecyclerViewAdapter(Context context, List<DataSourse.DataItem> nData) {
         dataForList = nData;
