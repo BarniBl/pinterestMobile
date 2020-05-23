@@ -6,4 +6,12 @@
     <string name="session_cookie">session_key</string>
     <string name="cookies_key">KEY_COOKIES</string>
     <string name="cookie_uri">/</string>
+    <string name="event_logout">LOGOUT_EVENT</string>
+    <string name="network_answer_500">Сервер временно недоступен</string>
+    <string name="network_answer_OK">OK</string>
+    <string name="field_must_be_filled">Поле должно быть заполнено</string>
+    <string name="please_give_right_email">Введите корректный email</string>
+    <string name="password_length_range">Длина пароля от 6 до 30 символов</string>
+    <string name="nickname_wrong_symbols">Только символы латинского алфавита и нижнее подчёркивание</string>
+    <string name="nickname_length_range">Длина никнейма от 3 до 30 символов</string>
 </resources>

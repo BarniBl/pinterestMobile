@@ -1,9 +1,6 @@
 package com.solar.pinterest.solarmobile;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,16 +19,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.EventBus.Event;
+import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.network.Network;
-import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
-import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
-import com.solar.pinterest.solarmobile.network.models.User;
-import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
+import com.solar.pinterest.solarmobile.storage.DBInterface;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
-import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
-import com.solar.pinterest.solarmobile.storage.SolarRepo;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +36,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class YourProfileEditingFragment extends Fragment implements RepositoryInterface.Listener {
+public class YourProfileEditingFragment extends Fragment implements DBInterface.Listener{
     public static final int PICK_IMAGE = 1;
 
     Button closeSettingsButton;
@@ -102,7 +96,8 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
             }
         });
 
-        SolarRepo.get(getActivity().getApplication()).getMasterUser(this);
+        // TODO: перенести логику получения masteruser из YourProfileActivity с ViewModel
+//        SolarRepo.get(getActivity().getApplication()).getMasterUser(this);
 
         okSettingsButton = view.findViewById(R.id.your_profile_editing_ok_button);
         okSettingsButton.setOnClickListener(new View.OnClickListener() {
@@ -132,13 +127,13 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
                             return;
                         }
 
-                        SolarRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
+                        AuthRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
 
                         replaceFragment();
                     }
                 };
 
-                Network.getInstance().editProfile(SolarRepo.get(getActivity().getApplication()).getSessionCookie(), editProfile, SolarRepo.get(getActivity().getApplication()).getCsrfToken(), editProfileCallback);
+                Network.getInstance().editProfile(AuthRepo.get(getActivity().getApplication()).getSessionCookie(), editProfile, AuthRepo.get(getActivity().getApplication()).getCsrfToken(), editProfileCallback);
 
             }
         });
@@ -147,7 +142,8 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SolarRepo.get(getActivity().getApplication()).onLogout();
+                EventBus.get().emit(new Event(getString(R.string.event_logout)));
+//                AuthRepo.get(getActivity().getApplication()).logout();
                 Intent intent = new Intent(getContext(), MainActivity.class);
                 getActivity().finish();
                 startActivity(intent);
@@ -207,20 +203,21 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
                 .addToBackStack(null)
                 .commit();
     }
-  
-    @Override
-    public void onReadUser(DBSchema.User user) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
-                Glide.with(getActivity().getApplicationContext())
-                        .load(path)
-                        .placeholder(R.drawable.fix_user_photo)
-                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-                        .into(avatarImage);
-            }
-        });
+
+    // TODO: заменить
+//    @Override
+//    public void onReadUser(DBSchema.User user) {
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
+//                Glide.with(getActivity().getApplicationContext())
+//                        .load(path)
+//                        .placeholder(R.drawable.fix_user_photo)
+//                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+//                        .into(avatarImage);
+//            }
+//        });
         //textName.setText(user.getName());
         //textSurname.setText(user.getSurname());
         //textNickname.setText(user.getUsername());
