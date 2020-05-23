@@ -9,13 +9,17 @@ import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 import com.solar.pinterest.solarmobile.network.models.User;
 
+import java.io.File;
 import java.net.HttpCookie;
 
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.MultipartBody.Builder;
 
 
 public class Network implements NetworkInterface {
@@ -24,6 +28,7 @@ public class Network implements NetworkInterface {
     private static Network instance;
     private static Gson gson;
     private OkHttpClient client;
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
 
     private Network() {
@@ -115,6 +120,27 @@ public class Network implements NetworkInterface {
         Request request = new Request.Builder()
                 .url(BASE_URL + path)
                 .method("POST", body)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .addHeader("csrf-token", csrf)
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void editProfilePicture(HttpCookie cookie, String fileName, String csrf, Callback callbackFunc) {
+        String path = "/api/v1/profile/data";
+
+        RequestBody requestBody = new okhttp3.MultipartBody.Builder().
+                setType(MultipartBody.FORM)
+                .addPart(
+                        Headers.of("Content-Disposition", "form-data; name=\"profilePicture\""),
+                        RequestBody.create(MEDIA_TYPE_PNG, new File(fileName)))
+                .build();
+        
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("POST", requestBody)
                 .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
                 .addHeader("csrf-token", csrf)
                 .build();

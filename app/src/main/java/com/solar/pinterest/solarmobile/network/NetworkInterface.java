@@ -20,4 +20,6 @@ public interface NetworkInterface {
     void addBoard(HttpCookie cookie, CreateBoardData createBoardData, String csrf, Callback callbackFunc);
 
     void editProfile(HttpCookie cookie, EditProfile profile, String csrf, Callback callbackFunc);
+
+    void editProfilePicture(HttpCookie cookie, String fileName, String csrf, Callback callbackFunc);
 }
