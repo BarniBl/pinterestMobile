@@ -28,6 +28,8 @@ import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
+import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.RepositoryInterface;
 import com.solar.pinterest.solarmobile.storage.SolarRepo;
@@ -40,8 +42,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class YourProfileEditingFragment extends Fragment implements RepositoryInterface.Listener{
-
+public class YourProfileEditingFragment extends Fragment implements RepositoryInterface.Listener {
     public static final int PICK_IMAGE = 1;
 
     Button closeSettingsButton;
@@ -101,6 +102,8 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
             }
         });
 
+        SolarRepo.get(getActivity().getApplication()).getMasterUser(this);
+
         okSettingsButton = view.findViewById(R.id.your_profile_editing_ok_button);
         okSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +114,7 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
                     return;
                 }
 
-                EditProfile editProfile = new EditProfile(textInputName.getEditText().getText().toString(), textInputSurname.getEditText().getText().toString(), textInputStatus.getEditText().getText().toString());
+                EditProfile editProfile = new EditProfile(textInputName.getEditText().getText().toString(), textInputSurname.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString(), textInputStatus.getEditText().getText().toString());
 
                 Callback editProfileCallback = new Callback() {
                     @Override
@@ -165,8 +168,8 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
         String nicknameInput = textInputNickname.getEditText().getText().toString().trim();
 
         if (nicknameInput.isEmpty()) {
-            textInputNickname.setError("Поле должно быть заполнено");
-            return false;
+            //textInputNickname.setError("Поле должно быть заполнено");
+            return true;
         } else if (nicknameInput.length() < 3 || nicknameInput.length() > 30) {
             textInputNickname.setError("Длина никнейма от 3 до 30 символов");
             return false;
@@ -218,8 +221,9 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
                         .into(avatarImage);
             }
         });
-        //textInputName. setText(user.getUsername());
-        //textInputSurname.setText(user.getStatus());
-        //textInputStatus.
+        //textName.setText(user.getName());
+        //textSurname.setText(user.getSurname());
+        //textNickname.setText(user.getUsername());
+        //textStatus.setText(user.getStatus());
     }
 }

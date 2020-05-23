@@ -1,5 +1,7 @@
 package com.solar.pinterest.solarmobile.network;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
@@ -105,7 +107,7 @@ public class Network implements NetworkInterface {
 
     @Override
     public void editProfile(HttpCookie cookie, EditProfile profile, String csrf, Callback callbackFunc) {
-        String path = "/api/v1/board";
+        String path = "/api/v1/profile/data";
 
         String json = this.gson.toJson(profile);
         RequestBody body = RequestBody.create(JSON_TYPE, json);
