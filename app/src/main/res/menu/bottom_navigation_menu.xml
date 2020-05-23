@@ -5,11 +5,11 @@
         android:icon="@drawable/index_button"
         android:title="Главная"
         />
-    <item
-        android:id="@+id/bottom_navigation_search"
-        android:icon="@drawable/search_button"
-        android:title="Поиск"
-        />
+<!--    <item-->
+<!--        android:id="@+id/bottom_navigation_search"-->
+<!--        android:icon="@drawable/search_button"-->
+<!--        android:title="Поиск"-->
+<!--        />-->
     <item
         android:id="@+id/bottom_navigation_plus"
         android:icon="@drawable/plus_button"
