@@ -73,8 +73,7 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
         closeSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-                getFragmentManager().beginTransaction().remove(YourProfileEditingFragment.this).commit();
+                replaceFragment();
             }
         });
 
@@ -111,6 +110,7 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
             @Override
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
+
                 if (!flag) {
                     return;
                 }
@@ -135,9 +135,7 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
 
                         SolarRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
 
-                        //getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-
-                        getFragmentManager().beginTransaction().remove(YourProfileEditingFragment.this).commit();
+                        replaceFragment();
                     }
                 };
 
@@ -202,6 +200,15 @@ public class YourProfileEditingFragment extends Fragment implements RepositoryIn
         return true;
     }
 
+    public void replaceFragment() {
+        Fragment fragment = new YourProfileFragment();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.your_profile_view_relativeLayout, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+  
     @Override
     public void onReadUser(DBSchema.User user) {
         getActivity().runOnUiThread(new Runnable() {

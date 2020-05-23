@@ -60,8 +60,7 @@ public class CreateBoardFragment extends Fragment implements RepositoryInterface
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-                getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
+                replaceFragment();
             }
         });
 
@@ -70,9 +69,11 @@ public class CreateBoardFragment extends Fragment implements RepositoryInterface
             @Override
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
+              
                 if (!flag) {
                     return;
                 }
+              
                 CreateBoardData createBoardData = new CreateBoardData(textInputTitle.getEditText().getText().toString(), textInputDiscription.getEditText().getText().toString());
 
                 Callback createBoardCallback = new Callback() {
@@ -93,8 +94,7 @@ public class CreateBoardFragment extends Fragment implements RepositoryInterface
 
                         SolarRepo.get(getActivity().getApplication()).setCsrfToken(createBoardResponse.csrf_token);
 
-                        //getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
-                        getFragmentManager().beginTransaction().remove(CreateBoardFragment.this).commit();
+                        replaceFragment();
                     }
                 };
 
@@ -128,8 +128,17 @@ public class CreateBoardFragment extends Fragment implements RepositoryInterface
         return true;
     }
 
+    public void replaceFragment() {
+        Fragment fragment = new YourProfileFragment();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.your_profile_view_relativeLayout, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
     @Override
     public void onReadUser(DBSchema.User user) {
-
+      
     }
 }
