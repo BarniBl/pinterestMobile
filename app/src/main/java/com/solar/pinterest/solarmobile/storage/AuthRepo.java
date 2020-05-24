@@ -48,6 +48,8 @@ public class AuthRepo {
 
     private String mCsrfToken;
 
+    private int mUserId = 0;
+
     public static AuthRepo get(Application app) {
         if (instance == null) {
             instance = new AuthRepo(app);
@@ -113,7 +115,17 @@ public class AuthRepo {
     }
 
     public int getUserId() {
-        return mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
+        int id = mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
+        if (id > 0) {
+            return id;
+        }
+        return mUserId;
+    }
+
+    public void setUserId(int id) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(mContext.getString(R.string.userid_key), id);
+        editor.apply();
     }
 
     public boolean isAuthorized() {
@@ -170,6 +182,8 @@ public class AuthRepo {
                         break;
                     }
                 }
+
+                setUserId(user.id);
                 UserRepo.get(mContext).putNetworkUser(user);
                 progress.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
             }
@@ -183,6 +197,7 @@ public class AuthRepo {
         editor.remove(mContext.getString(R.string.cookies_key));
         editor.remove(mContext.getString(R.string.userid_key));
         editor.commit();
+        mUserId = 0;
 
         mCookieStore.removeAll();
 

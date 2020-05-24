@@ -25,10 +25,13 @@ public class YourProfileViewModel extends AndroidViewModel {
     }
 
     public LiveData<Pair<User, StatusEntity>> getMasterUser() {
+        return getMasterUser(false);
+    }
+    public LiveData<Pair<User, StatusEntity>> getMasterUser(boolean forseUpdate) {
         if (AuthRepo.get(getApplication()).getSessionCookie() == null) {
             return new MutableLiveData<>(new Pair<>(null, new StatusEntity(StatusEntity.Status.EMPTY)));
         }
-        return mUserRepo.getMasterProfile();
+        return mUserRepo.getMasterProfile(forseUpdate);
     }
 
     // TODO: редактирование юзера
