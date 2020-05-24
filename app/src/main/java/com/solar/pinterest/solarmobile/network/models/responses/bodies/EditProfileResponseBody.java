@@ -1,4 +1,4 @@
-package com.solar.pinterest.solarmobile.network.models;
+package com.solar.pinterest.solarmobile.network.models.responses.bodies;
 
 public class EditProfileResponseBody {
     public String info;
