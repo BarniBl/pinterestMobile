@@ -1,4 +1,6 @@
-package com.solar.pinterest.solarmobile.network.models;
+package com.solar.pinterest.solarmobile.network.models.responses;
+
+import com.solar.pinterest.solarmobile.network.models.responses.bodies.CreateBoardResponseBody;
 
 public class CreateBoardResponse {
     public String csrf_token;

@@ -27,12 +27,14 @@ import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.ViewModels.YourProfileViewModel;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
-import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.DBInterface;
 import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
+import com.solar.pinterest.solarmobile.network.models.responses.EditProfileResponse;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
+import com.solar.pinterest.solarmobile.storage.DBInterface;
 
 import org.jetbrains.annotations.NotNull;
 

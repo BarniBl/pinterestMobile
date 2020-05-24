@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
-import com.solar.pinterest.solarmobile.network.models.CreateBoardResponse;
+import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.DBInterface;
 import com.solar.pinterest.solarmobile.storage.DBSchema;

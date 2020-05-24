@@ -17,10 +17,11 @@ import com.solar.pinterest.solarmobile.EventBus.Event;
 import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
-import com.solar.pinterest.solarmobile.network.models.responses.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
-import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.network.models.responses.MyBoardsResponse;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +38,9 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class AuthRepo {
+public class BoardRepo {
     private static final String TAG = "Solar.AuthRepo";
-    private static AuthRepo instance;
+    private static BoardRepo instance;
     private Application mContext;
     private SolarDatabase mDatabase;
 
@@ -48,15 +49,15 @@ public class AuthRepo {
 
     private String mCsrfToken;
 
-    public static AuthRepo get(Application app) {
+    public static BoardRepo get(Application app) {
         if (instance == null) {
-            instance = new AuthRepo(app);
+            instance = new BoardRepo(app);
         }
         return instance;
 
     }
 
-    private AuthRepo(Application app) {
+    private BoardRepo(Application app) {
         mContext = app;
         EventBus.get().subscribe(new Event(mContext.getString(R.string.event_logout)), event -> logout());
 
@@ -87,7 +88,7 @@ public class AuthRepo {
     public HttpCookie getSessionCookie() {
         List<HttpCookie> cookieList = mCookieStore.get(
                 URI.create(mContext.getString(R.string.cookie_uri)));
-        for(HttpCookie cookie : cookieList) {
+        for (HttpCookie cookie : cookieList) {
             if (cookie.getName().equals(mContext.getString(R.string.session_cookie))) {
                 return cookie;
             }
@@ -120,29 +121,30 @@ public class AuthRepo {
         return getSessionCookie() != null;
     }
 
-    public LiveData<StatusEntity> login(@NonNull String login, @NonNull String password) {
-        MutableLiveData<StatusEntity> mAuthProgress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
+    public MutableLiveData<StatusEntity> createBoard(@NonNull String title, @NonNull String description) {
+        MutableLiveData<StatusEntity> progress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
 
-        LoginData loginData = new LoginData(login, password);
-        Network.getInstance().login(loginData, getAuthResponseCallback(mAuthProgress));
+        CreateBoardData boardData = new CreateBoardData(title, description);
+        Network.getInstance().addBoard(this.getSessionCookie(), boardData, this.getCsrfToken(), createBoardResponseCallback(progress));
 
-        return mAuthProgress;
+        //TODO ADD CURRENT BOARD TO STORE
+        return progress;
     }
 
-    public MutableLiveData<StatusEntity> register(@NonNull String login, @NonNull String nick, @NonNull String password) {
-        MutableLiveData<StatusEntity> authProgress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
+    public MutableLiveData<StatusEntity> getMyBoards() {
+        MutableLiveData<StatusEntity> progress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
 
-        RegistrationData registrationData = new RegistrationData(login, password, nick);
-        Network.getInstance().registration(registrationData, getAuthResponseCallback(authProgress));
+        Network.getInstance().getMyBoards(this.getSessionCookie(), getMyBoardsResponseCallback(progress));
 
-        return authProgress;
+        return progress;
     }
 
-    private Callback getAuthResponseCallback(MutableLiveData<StatusEntity> progress) {
+
+    private Callback createBoardResponseCallback(MutableLiveData<StatusEntity> progress) {
         return new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-               progress.postValue(new StatusEntity(
+                progress.postValue(new StatusEntity(
                         StatusEntity.Status.FAILED,
                         mContext.getString(R.string.network_answer_500)
                 ));
@@ -152,25 +154,46 @@ public class AuthRepo {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
-                ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
-                if (!profileResponse.body.info.equals(mContext.getString(R.string.network_answer_OK))) {
+                CreateBoardResponse createBoardResponse = gson.fromJson(response.body().string(), CreateBoardResponse.class);
+                if (!createBoardResponse.body.info.equals("data successfully saved")) {
                     progress.postValue(new StatusEntity(
                             StatusEntity.Status.FAILED,
-                            profileResponse.body.info
+                            createBoardResponse.body.info
                     ));
                     return;
                 }
-                User user = profileResponse.body.user;
 
-                List<HttpCookie> cookies = HttpCookie.parse(response.header("Set-Cookie"));
-                for (HttpCookie cookie : cookies) {
-                    String cookieName = cookie.getName();
-                    if (cookieName.equals(mContext.getString(R.string.session_cookie))) {
-                        setSessionCookie(cookie);
-                        break;
-                    }
+                progress.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
+            }
+        };
+    }
+
+    private Callback getMyBoardsResponseCallback(MutableLiveData<StatusEntity> progress) {
+        return new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                progress.postValue(new StatusEntity(
+                        StatusEntity.Status.FAILED,
+                        mContext.getString(R.string.network_answer_500)
+                ));
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                MyBoardsResponse myBoardsResponse = gson.fromJson(response.body().string(), MyBoardsResponse.class);
+                if (!myBoardsResponse.body.info.equals("OK")) {
+                    progress.postValue(new StatusEntity(
+                            StatusEntity.Status.FAILED,
+                            myBoardsResponse.body.info
+                    ));
+                    return;
                 }
-                UserRepo.get(mContext).putNetworkUser(user);
+
+                //TODO ADD MY BOARDS TO STORE
+
+                //UserRepo.get(mContext).putNetworkUser(user);
                 progress.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
             }
         };

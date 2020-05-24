@@ -1,4 +1,6 @@
-package com.solar.pinterest.solarmobile.network.models;
+package com.solar.pinterest.solarmobile.network.models.responses.bodies;
+
+import com.solar.pinterest.solarmobile.network.models.Board;
 
 public class CreateBoardResponseBody {
     public String info;

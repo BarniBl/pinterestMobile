@@ -11,9 +11,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
+<<<<<<< HEAD
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
+=======
+import com.solar.pinterest.solarmobile.network.models.responses.ProfileResponse;
+>>>>>>> origin/dev
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 

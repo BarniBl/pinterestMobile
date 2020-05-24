@@ -6,16 +6,22 @@ import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
+import com.solar.pinterest.solarmobile.network.models.Pin;
+import com.solar.pinterest.solarmobile.network.models.PinComment;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 import com.solar.pinterest.solarmobile.network.models.User;
 
+import java.io.File;
 import java.net.HttpCookie;
 
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.MultipartBody.Builder;
 
 
 public class Network implements NetworkInterface {
@@ -24,6 +30,7 @@ public class Network implements NetworkInterface {
     private static Network instance;
     private static Gson gson;
     private OkHttpClient client;
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
 
     private Network() {
@@ -121,5 +128,111 @@ public class Network implements NetworkInterface {
 
         client.newCall(request).enqueue(callbackFunc);
     }
+
+    @Override
+    public void editProfilePicture(HttpCookie cookie, String fileName, String csrf, Callback callbackFunc) {
+        String path = "/api/v1/profile/data";
+
+        RequestBody requestBody = new okhttp3.MultipartBody.Builder().
+                setType(MultipartBody.FORM)
+                .addPart(
+                        Headers.of("Content-Disposition", "form-data; name=\"profilePicture\""),
+                        RequestBody.create(MEDIA_TYPE_PNG, new File(fileName)))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("POST", requestBody)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .addHeader("csrf-token", csrf)
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void createPin(HttpCookie cookie, String fileName, Pin pin, String csrf, Callback callbackFunc) {
+        String path = "/api/v1/pin";
+
+        String json = this.gson.toJson(pin);
+        RequestBody body = RequestBody.create(JSON_TYPE, json);
+
+        RequestBody requestBody = new okhttp3.MultipartBody.Builder().
+                setType(MultipartBody.FORM)
+                .addPart(
+                        Headers.of("Content-Disposition", "form-data; name=\"pinPicture\""),
+                        RequestBody.create(MEDIA_TYPE_PNG, new File(fileName)))
+                .addPart(Headers.of("Content-Disposition", "form-data; name=\"pin\""),
+                        body)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("POST", requestBody)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .addHeader("csrf-token", csrf)
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void getPinsList(HttpCookie cookie, int limit, int sinceID, Callback callbackFunc) {
+        String path = "/api/v1/pin/list/new?";
+        path += "limit=" + limit + "&id=" + sinceID;
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("GET", null)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void getPin(HttpCookie cookie, int pinID, Callback callbackFunc) {
+        String path = "/api/v1/pin/";
+        path += pinID;
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("GET", null)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void sendComment(HttpCookie cookie, int pinID, PinComment comment, String csrf, Callback callbackFunc) {
+        String path = "/api/v1/pin/";
+        path += pinID + "/comment";
+
+        String json = this.gson.toJson(comment);
+        RequestBody body = RequestBody.create(JSON_TYPE, json);
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("POST", body)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .addHeader("csrf-token", csrf)
+                .build();
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
+    @Override
+    public void getMyBoards(HttpCookie cookie, Callback callbackFunc) {
+        String path = "api/v1/board/list/my";
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + path)
+                .method("GET", null)
+                .addHeader("Cookie", cookie.getName() + "=" + cookie.getValue())
+                .build();
+
+        client.newCall(request).enqueue(callbackFunc);
+    }
+
 }
 
