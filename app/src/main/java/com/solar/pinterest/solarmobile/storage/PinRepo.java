@@ -38,7 +38,7 @@ public class PinRepo extends SolarRepoAbstract {
         MutableLiveData<List<DBSchema.Pin>> pinLD = new MutableLiveData<>();
         mDatabase.getPins(ids, (res) -> {
             AtomicInteger waiting = new AtomicInteger(0);
-            List pins = new LinkedList();
+            List<DBSchema.Pin> pins = new LinkedList<>();
             for (Pair<DBSchema.Pin, Boolean> r : res) {
                 if (r.second) {
                     pins.add(r.first);

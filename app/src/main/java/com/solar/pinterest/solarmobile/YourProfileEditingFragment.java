@@ -20,29 +20,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.EventBus.Event;
 import com.solar.pinterest.solarmobile.EventBus.EventBus;
-import com.solar.pinterest.solarmobile.ViewModels.YourProfileViewModel;
-import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.User;
-import com.solar.pinterest.solarmobile.storage.AuthRepo;
-import com.solar.pinterest.solarmobile.storage.DBInterface;
-import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
-import com.solar.pinterest.solarmobile.network.models.responses.EditProfileResponse;
-import com.solar.pinterest.solarmobile.storage.AuthRepo;
-import com.solar.pinterest.solarmobile.storage.DBInterface;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class YourProfileEditingFragment extends Fragment {
     private static final String TAG = "SolarMobile.ProfileEdit";
