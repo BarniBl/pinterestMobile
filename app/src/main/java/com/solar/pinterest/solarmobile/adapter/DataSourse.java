@@ -23,6 +23,39 @@ public class DataSourse {
         return mData.size();
     }
 
+    public ArrayList<String> getUrl() {
+        ArrayList<String> urls = new ArrayList<>();
+
+        for (int i = 0; i < mData.size(); i++) {
+            urls.add(mData.get(i).imageUrl);
+        }
+        return urls;
+    }
+
+    public ArrayList<String> getTitles() {
+        ArrayList<String> titles = new ArrayList<>();
+
+        for (int i = 0; i < mData.size(); i++) {
+            titles.add(mData.get(i).title);
+        }
+        return titles;
+    }
+
+    public ArrayList<Integer> getId() {
+        ArrayList<Integer> idData = new ArrayList<>();
+
+        for (int i = 0; i < mData.size(); i++) {
+            idData.add(mData.get(i).id);
+        }
+        return idData;
+    }
+
+    public void createDataList(ArrayList<String> urls, ArrayList<String> titles, ArrayList<Integer> idData) {
+        for (int i = 0; i < urls.size(); i++) {
+            mData.add(new DataItem(urls.get(i), titles.get(i), idData.get(i)));
+        }
+    }
+
     public static class DataItem {
 
         String imageUrl;

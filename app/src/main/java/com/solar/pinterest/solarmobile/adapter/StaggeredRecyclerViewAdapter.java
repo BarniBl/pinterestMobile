@@ -28,12 +28,13 @@ public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<Staggered
 
     private List<DataSourse.DataItem> dataForList;
     private Context pinContext;
+    private Fragment itemFragment;
 //    private int layoutId;
-//    private Fragment itemFragment;
 
-    public StaggeredRecyclerViewAdapter(Context context, List<DataSourse.DataItem> nData) {
+    public StaggeredRecyclerViewAdapter(Context context, List<DataSourse.DataItem> nData, Fragment fragment) {
         dataForList = nData;
         pinContext = context;
+        itemFragment = fragment;
     }
 
     @NonNull
@@ -68,13 +69,12 @@ public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<Staggered
                 Bundle bundle = new Bundle();
                 bundle.putInt(KEY_ID, dataForList.get(position).id);
 
-                PinViewFragment pinViewFragment = new PinViewFragment();
-                pinViewFragment.setArguments(bundle);
+                itemFragment.setArguments(bundle);
 
                 AppCompatActivity activity = (AppCompatActivity)v.getContext();
                 activity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.your_profile_view_relativeLayout, pinViewFragment)
+                        .replace(R.id.your_profile_view_relativeLayout, itemFragment)
                         .addToBackStack(null)
                         .commit();
             }

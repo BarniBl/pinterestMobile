@@ -45,7 +45,10 @@ public class IndexPageFragment extends Fragment {
 
     private void createRecyclerView(View view, Context context) {
         RecyclerView recyclerView = view.findViewById(R.id.index_page_recycler_view);
-        StaggeredRecyclerViewAdapter staggeredRecyclerViewAdapter = new StaggeredRecyclerViewAdapter(context, dataForIndex.getDataSource());
+        StaggeredRecyclerViewAdapter staggeredRecyclerViewAdapter = new StaggeredRecyclerViewAdapter(
+                context,
+                dataForIndex.getDataSource(),
+                new PinViewFragment());
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(NUM_COLUMNS, LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         recyclerView.setAdapter(staggeredRecyclerViewAdapter);

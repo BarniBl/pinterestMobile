@@ -20,6 +20,10 @@ import com.solar.pinterest.solarmobile.profileFragments.ProfilePinsListFragment;
 
 public class YourProfileFragment extends Fragment {
 
+    String URL_KEY = "url";
+    String TITLE_KEY = "title";
+    String ID_KEY = "id";
+
     Button addPinsBoardsButton;
     Button settingsButton;
     TextView errorTextYourProfile;
@@ -44,10 +48,12 @@ public class YourProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.your_profile_fragment, container, false);
         getActivity().findViewById(R.id.your_profile_bottom_navigation).setVisibility(View.VISIBLE);
 
-        showBoards();
-
         BottomNavigationView bottomNavBar = getActivity().findViewById(R.id.your_profile_bottom_navigation);
         bottomNavBar.getMenu().getItem(2).setChecked(true);
+
+        getPins();
+        getBoards();
+        showBoards();
 
         errorTextYourProfile = view.findViewById(R.id.your_profile_view_error_field);
 
@@ -139,20 +145,39 @@ public class YourProfileFragment extends Fragment {
     }
 
     private void showBoards() {
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(URL_KEY, dataForBoards.getUrl());
+        bundle.putStringArrayList(TITLE_KEY, dataForBoards.getTitles());
+        bundle.putIntegerArrayList(ID_KEY, dataForBoards.getId());
+
         selectedFragment = new ProfileBoardsListFragment();
+        selectedFragment.setArguments(bundle);
         replaceFragment(selectedFragment, forPinsBoardsPlace);
     }
 
     private void showPins() {
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(URL_KEY, dataForPins.getUrl());
+        bundle.putStringArrayList(TITLE_KEY, dataForPins.getTitles());
+        bundle.putIntegerArrayList(ID_KEY, dataForPins.getId());
+
         selectedFragment = new ProfilePinsListFragment();
+        selectedFragment.setArguments(bundle);
         replaceFragment(selectedFragment, forPinsBoardsPlace);
     }
-//
-//    public void getBoards() {
-//
-//    }
-//
-//    public void getPins() {
-//
-//    }
+
+    public void getBoards() {
+        dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 1);
+        dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 2);
+        dataForBoards.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 3);
+        dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 4);
+        dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 5);
+        dataForBoards.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 6);
+    }
+
+    public void getPins() {
+        dataForPins.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 1);
+        dataForPins.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 2);
+        dataForPins.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 3);
+    }
 }
