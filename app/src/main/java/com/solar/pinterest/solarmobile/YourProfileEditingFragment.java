@@ -3,6 +3,7 @@ package com.solar.pinterest.solarmobile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,27 +15,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.EventBus.Event;
 import com.solar.pinterest.solarmobile.EventBus.EventBus;
-import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
-import com.solar.pinterest.solarmobile.network.models.responses.EditProfileResponse;
-import com.solar.pinterest.solarmobile.storage.AuthRepo;
-import com.solar.pinterest.solarmobile.storage.DBInterface;
+import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-
-public class YourProfileEditingFragment extends Fragment implements DBInterface.Listener{
+public class YourProfileEditingFragment extends Fragment {
+    private static final String TAG = "SolarMobile.ProfileEdit";
     public static final int PICK_IMAGE = 1;
 
     Button closeSettingsButton;
@@ -94,8 +87,10 @@ public class YourProfileEditingFragment extends Fragment implements DBInterface.
             }
         });
 
-        // TODO: перенести логику получения masteruser из YourProfileActivity с ViewModel
-//        SolarRepo.get(getActivity().getApplication()).getMasterUser(this);
+        LiveData<Pair<User, StatusEntity>> liveUser = ((YourProfileActivity) getActivity()).getViewModel().getMasterUser();
+        liveUser.observe(getViewLifecycleOwner(), pair -> {
+            onUserLoaded(pair);
+        });
 
         okSettingsButton = view.findViewById(R.id.your_profile_editing_ok_button);
         okSettingsButton.setOnClickListener(new View.OnClickListener() {
@@ -108,31 +103,10 @@ public class YourProfileEditingFragment extends Fragment implements DBInterface.
                 }
 
                 EditProfile editProfile = new EditProfile(textInputName.getEditText().getText().toString(), textInputSurname.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString(), textInputStatus.getEditText().getText().toString());
-
-                Callback editProfileCallback = new Callback() {
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        errorSettingsTextView.setText("Сервер временно недоступен");
-                    }
-
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        GsonBuilder builder = new GsonBuilder();
-                        Gson gson = builder.create();
-                        EditProfileResponse editProfileResponse = gson.fromJson(response.body().string(), EditProfileResponse.class);
-                        if (!editProfileResponse.body.info.equals("data successfully saved")) {
-                            errorSettingsTextView.setText(editProfileResponse.body.info);
-                            return;
-                        }
-
-                        AuthRepo.get(getActivity().getApplication()).setCsrfToken(editProfileResponse.csrf_token);
-
-                        replaceFragment();
-                    }
-                };
-
-                Network.getInstance().editProfile(AuthRepo.get(getActivity().getApplication()).getSessionCookie(), editProfile, AuthRepo.get(getActivity().getApplication()).getCsrfToken(), editProfileCallback);
-
+                LiveData<StatusEntity> liveStatus = ((YourProfileActivity) getActivity()).getViewModel().editMasterUser(editProfile);
+                liveStatus.observe(getViewLifecycleOwner(), res -> {
+                    onUserEdited(res);
+                });
             }
         });
 
@@ -202,23 +176,44 @@ public class YourProfileEditingFragment extends Fragment implements DBInterface.
                 .commit();
     }
 
-    // TODO: заменить
-//    @Override
-//    public void onReadUser(DBSchema.User user) {
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.getAvatar();
-//                Glide.with(getActivity().getApplicationContext())
-//                        .load(path)
-//                        .placeholder(R.drawable.fix_user_photo)
-//                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
-//                        .into(avatarImage);
-//            }
-//        });
-        //textName.setText(user.getName());
-        //textSurname.setText(user.getSurname());
-        //textNickname.setText(user.getUsername());
-        //textStatus.setText(user.getStatus());
+    public void onUserLoaded(Pair<User, StatusEntity> pair) {
+        switch (pair.second.getStatus()) {
+            case FAILED:
+                errorSettingsTextView.setText(pair.second.getMessage());
+                break;
+            case EMPTY:
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
+            case SUCCESS:
+                User user = pair.first;
+
+                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.avatarDir;
+                Glide.with(getActivity().getApplicationContext())
+                        .load(path)
+                        .placeholder(R.drawable.fix_user_photo)
+                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+                        .into(avatarImage);
+
+                textName.setText(user.name);
+                textSurname.setText(user.surname);
+                textNickname.setText(user.username);
+                textStatus.setText(user.status);
+            default:
+                break;
+        }
+    }
+
+    public void onUserEdited(StatusEntity res) {
+        switch (res.getStatus()) {
+            case FAILED:
+                errorSettingsTextView.setText(res.getMessage());
+                break;
+            case SUCCESS:
+                replaceFragment();
+                break;
+            default:
+                Log.e(TAG, "Unexpected authStatus value: " + res.getStatus().toString());
+        }
     }
 }

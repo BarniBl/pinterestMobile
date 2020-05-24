@@ -1,4 +1,4 @@
-package com.solar.pinterest.solarmobile;
+package com.solar.pinterest.solarmobile.ViewModels;
 
 import android.app.Application;
 import android.util.Log;
@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.solar.pinterest.solarmobile.EventBus.Event;
 import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.EventBus.EventListener;
+import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
 

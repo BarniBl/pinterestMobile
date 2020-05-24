@@ -1,7 +1,6 @@
 package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 
 
-import com.solar.pinterest.solarmobile.storage.StatusEntity;
+import com.solar.pinterest.solarmobile.ViewModels.AuthViewModel;
 
 import okhttp3.MediaType;
 

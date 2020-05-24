@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.solar.pinterest.solarmobile.ViewModels.AuthViewModel;
 
 public class RegistrationActivity extends AppCompatActivity {
     private static final String TAG = "Solar.RegistrationActiv";

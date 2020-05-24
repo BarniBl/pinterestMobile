@@ -1,7 +1,9 @@
 package com.solar.pinterest.solarmobile;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +14,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.solar.pinterest.solarmobile.ViewModels.YourProfileViewModel;
+import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
 public class YourProfileFragment extends Fragment {
 
@@ -26,6 +34,7 @@ public class YourProfileFragment extends Fragment {
     TextView yourProfileStatus;
 
     Fragment selectedFragment;
+//    YourProfileViewModel mViewModel;
 
     @Nullable
     @Override
@@ -57,6 +66,11 @@ public class YourProfileFragment extends Fragment {
                 selectedFragment = new YourProfileEditingFragment();
                 replaceFragment(selectedFragment);
             }
+        });
+
+        LiveData<Pair<User, StatusEntity>> liveUser = ((YourProfileActivity) getActivity()).getViewModel().getMasterUser();
+        liveUser.observe(getViewLifecycleOwner(), pair -> {
+            onUserLoaded(pair);
         });
 
         return view;
@@ -106,5 +120,31 @@ public class YourProfileFragment extends Fragment {
                 .replace(R.id.your_profile_view_relativeLayout, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void onUserLoaded(Pair<User, StatusEntity> pair) {
+        switch (pair.second.getStatus()) {
+            case FAILED:
+                errorTextYourProfile.setText(pair.second.getMessage());
+                break;
+            case EMPTY:
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
+            case SUCCESS:
+                User user = pair.first;
+
+                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.avatarDir;
+                Glide.with(getActivity().getApplicationContext())
+                        .load(path)
+                        .placeholder(R.drawable.fix_user_photo)
+                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+                        .into(yourProfileAvatarImage);
+
+                yourProfileStatus.setText(user.status);
+                yourProfileNickname.setText(user.username);
+            default:
+                break;
+        }
     }
 }
