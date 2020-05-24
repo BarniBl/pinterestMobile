@@ -17,11 +17,13 @@ import com.solar.pinterest.solarmobile.EventBus.Event;
 import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.Board;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 import com.solar.pinterest.solarmobile.network.models.responses.MyBoardsResponse;
+import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -127,7 +129,6 @@ public class BoardRepo {
         CreateBoardData boardData = new CreateBoardData(title, description);
         Network.getInstance().addBoard(this.getSessionCookie(), boardData, this.getCsrfToken(), createBoardResponseCallback(progress));
 
-        //TODO ADD CURRENT BOARD TO STORE
         return progress;
     }
 
@@ -191,7 +192,9 @@ public class BoardRepo {
                     return;
                 }
 
-                //TODO ADD MY BOARDS TO STORE
+                for(Board board : myBoardsResponse.body.boards) {
+                    mDatabase.putBoard(new BoardConverter().Net2DB(board));
+                }
 
                 //UserRepo.get(mContext).putNetworkUser(user);
                 progress.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
@@ -210,5 +213,12 @@ public class BoardRepo {
         mCookieStore.removeAll();
 
         mDatabase.clear();
+    }
+
+    private class BoardConverter {
+        public DBSchema.Board Net2DB(Board net) {
+            return new DBSchema.Board(net.id, net.category, net.isDeleted, net.ownerId, net.title, net.description,
+                    net.viewPin, TimestampConverter.toDate(net.createdTime));
+        }
     }
 }
