@@ -26,30 +26,6 @@ public class SolarRepo implements DBInterface {
     }
 
     @Override
-    public void getUser(int id, UserListener listener) {
-        mDatabase.getUser(id, listener);
-    }
-
-    @Override
-    public void getUser(String nick, OnReadListener<DBSchema.User> listener) {
-        mDatabase.getUser(nick, listener);
-    }
-
-    public void putUser(DBSchema.User user) {
-        mDatabase.putUser(user);
-    }
-
-    @Override
-    public void getPin(int id, OnReadListener<DBSchema.Pin> listener) {
-        mDatabase.getPin(id, listener);
-    }
-
-    @Override
-    public void getPins(int[] ids, OnReadListener<Pair<List<DBSchema.Pin>, List<Integer>>> listener) {
-        mDatabase.getPins(ids, listener);
-    }
-
-    @Override
     public void getBoardPins(int id, OnReadListener<List<DBSchema.Pin>> listener) {
         mDatabase.getBoardPins(id, listener);
     }

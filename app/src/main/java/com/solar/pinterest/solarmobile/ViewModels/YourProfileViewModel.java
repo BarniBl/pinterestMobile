@@ -1,4 +1,4 @@
-package com.solar.pinterest.solarmobile;
+package com.solar.pinterest.solarmobile.ViewModels;
 
 import android.app.Application;
 import android.util.Pair;
@@ -30,4 +30,6 @@ public class YourProfileViewModel extends AndroidViewModel {
         }
         return mUserRepo.getMasterProfile(cookie);
     }
+
+    // TODO: редактирование юзера
 }

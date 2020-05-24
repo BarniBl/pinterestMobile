@@ -10,6 +10,7 @@ import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -59,24 +60,28 @@ public class SolarDatabase implements DBInterface {
     @Override
     public void getPin(int id, OnReadListener<DBSchema.Pin> listener) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            DBSchema.Pin pin = mPinDao.getPin(id);
+//            DBSchema.Pin pin = mPinDao.getPin(id);
+            DBSchema.Pin pin = new DBSchema.Pin(613, "Lynxxxx", "Lynxxxx", 116, new Date(), "/", "Title", "Desc", false);
             listener.call(pin);
         });
     }
 
     @Override
-    public void getPins(int[] ids, OnReadListener<Pair<List<DBSchema.Pin>, List<Integer>>> listener) {
+    public void getPins(int[] ids, OnReadListener<List<Pair<DBSchema.Pin, Boolean>>> listener) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<DBSchema.Pin> res = new ArrayList<>();
-            List<Integer> fails = new ArrayList<>();
+            List<Pair<DBSchema.Pin, Boolean>> res = new ArrayList<>();
             for(int id : ids) {
+                DBSchema.Pin pin;
+                Boolean fail = false;
                 try {
-                    res.add(mPinDao.getPin(id));
+                    pin = mPinDao.getPin(id);
                 } catch (SQLException e) {
-                    fails.add(id);
+                    pin = new DBSchema.Pin(id);
+                    fail = true;
                 }
+                res.add(Pair.create(pin, fail));
             }
-            listener.call(Pair.create(res, fails));
+            listener.call(res);
         });
     }
 

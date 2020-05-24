@@ -1,12 +1,10 @@
 package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,24 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.solar.pinterest.solarmobile.network.Network;
-import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
-import com.solar.pinterest.solarmobile.network.models.RegistrationData;
-import com.solar.pinterest.solarmobile.storage.AuthRepo;
-import com.solar.pinterest.solarmobile.storage.SolarRepo;
-import com.solar.pinterest.solarmobile.storage.StatusEntity;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.net.HttpCookie;
-import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import com.solar.pinterest.solarmobile.ViewModels.AuthViewModel;
 
 public class RegistrationActivity extends AppCompatActivity {
     private static final String TAG = "Solar.RegistrationActiv";

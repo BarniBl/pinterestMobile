@@ -202,6 +202,10 @@ public class DBSchema {
             this.deleted = deleted;
         }
 
+        public Pin(int id) {
+            this.id = id;
+        }
+
         public int getId() {
             return id;
         }
