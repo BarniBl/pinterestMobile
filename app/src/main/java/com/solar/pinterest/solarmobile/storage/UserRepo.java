@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
-import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
+import com.solar.pinterest.solarmobile.network.models.responses.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 

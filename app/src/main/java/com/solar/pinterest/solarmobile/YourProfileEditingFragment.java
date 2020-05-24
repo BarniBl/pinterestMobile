@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,10 +22,9 @@ import com.solar.pinterest.solarmobile.EventBus.Event;
 import com.solar.pinterest.solarmobile.EventBus.EventBus;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
-import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
+import com.solar.pinterest.solarmobile.network.models.responses.EditProfileResponse;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.DBInterface;
-import com.solar.pinterest.solarmobile.storage.DBSchema;
 
 import org.jetbrains.annotations.NotNull;
 
