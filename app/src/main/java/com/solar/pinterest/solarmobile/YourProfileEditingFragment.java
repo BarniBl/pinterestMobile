@@ -46,8 +46,6 @@ public class YourProfileEditingFragment extends Fragment {
     private static final String TAG = "SolarMobile.ProfileEdit";
     public static final int PICK_IMAGE = 1;
 
-    YourProfileViewModel mViewModel;
-
     Button closeSettingsButton;
     ImageView avatarImage;
     ImageButton chooseAvatarButton;
@@ -105,9 +103,7 @@ public class YourProfileEditingFragment extends Fragment {
             }
         });
 
-        mViewModel = new ViewModelProvider(this).get(YourProfileViewModel.class);
-
-        LiveData<Pair<User, StatusEntity>> liveUser = mViewModel.getMasterUser();
+        LiveData<Pair<User, StatusEntity>> liveUser = ((YourProfileActivity) getActivity()).getViewModel().getMasterUser();
         liveUser.observe(getViewLifecycleOwner(), pair -> {
             onUserLoaded(pair);
         });
@@ -123,7 +119,7 @@ public class YourProfileEditingFragment extends Fragment {
                 }
 
                 EditProfile editProfile = new EditProfile(textInputName.getEditText().getText().toString(), textInputSurname.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString(), textInputStatus.getEditText().getText().toString());
-                LiveData<StatusEntity> liveStatus = mViewModel.editMasterUser(editProfile);
+                LiveData<StatusEntity> liveStatus = ((YourProfileActivity) getActivity()).getViewModel().editMasterUser(editProfile);
                 liveStatus.observe(getViewLifecycleOwner(), res -> {
                     onUserEdited(res);
                 });
@@ -195,8 +191,6 @@ public class YourProfileEditingFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
-
-    // TODO: заменить
 
     public void onUserLoaded(Pair<User, StatusEntity> pair) {
         switch (pair.second.getStatus()) {

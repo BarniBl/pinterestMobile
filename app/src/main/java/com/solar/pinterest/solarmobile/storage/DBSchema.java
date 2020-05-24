@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -202,6 +203,7 @@ public class DBSchema {
             this.deleted = deleted;
         }
 
+        @Ignore
         public Pin(int id) {
             this.id = id;
         }

@@ -1,20 +1,16 @@
 package com.solar.pinterest.solarmobile.storage;
 
 import android.app.Application;
-import android.media.VolumeShaper;
 import android.util.Pair;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.solar.pinterest.solarmobile.network.models.Board;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PinRepo extends SolarRepoAbstract {
-    private Application mContext;
     private SolarDatabase mDatabase;
     private static PinRepo instance;
 
@@ -26,7 +22,6 @@ public class PinRepo extends SolarRepoAbstract {
     }
 
     private PinRepo(Application context) {
-        mContext = context;
         mDatabase = SolarDatabase.get(context);
     }
 

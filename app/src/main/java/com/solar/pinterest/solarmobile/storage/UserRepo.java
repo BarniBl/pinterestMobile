@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile.storage;
 
 import android.app.Application;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.lifecycle.LiveData;
@@ -58,6 +59,7 @@ public class UserRepo extends SolarRepoAbstract{
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.e("UserRepo", "Response got getting user");
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
@@ -70,7 +72,7 @@ public class UserRepo extends SolarRepoAbstract{
                 }
                 AuthRepo.get(mContext).setCsrfToken(profileResponse.csrf_token);
                 User user = profileResponse.body.user;
-
+                Log.e("UserRepo", "OK got getting user");
                 putNetworkUser(user);
 
                 mUser.postValue(new Pair<>(user, new StatusEntity(
@@ -89,6 +91,7 @@ public class UserRepo extends SolarRepoAbstract{
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("UserRepo", "Error got editing user");
                 result.postValue(new StatusEntity(
                         StatusEntity.Status.FAILED,
                         mContext.getString(R.string.network_answer_500)
@@ -98,6 +101,7 @@ public class UserRepo extends SolarRepoAbstract{
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.e("UserRepo", "Response got editing user");
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 EditProfileResponse editProfileResponse = gson.fromJson(response.body().string(), EditProfileResponse.class);
@@ -106,11 +110,14 @@ public class UserRepo extends SolarRepoAbstract{
                             StatusEntity.Status.FAILED,
                             editProfileResponse.body.info
                     ));
+                    Log.e("UserRepo", "bad saved got editing user");
                     return;
                 }
 
                 AuthRepo.get(mContext).setCsrfToken(editProfileResponse.csrf_token);
+                Log.e("UserRepo", "OKgot editing user");
                 getMasterProfile();
+
 
                 result.postValue(new StatusEntity(
                         StatusEntity.Status.SUCCESS
