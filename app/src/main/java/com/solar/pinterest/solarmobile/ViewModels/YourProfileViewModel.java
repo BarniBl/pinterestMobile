@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
@@ -24,12 +25,14 @@ public class YourProfileViewModel extends AndroidViewModel {
     }
 
     public LiveData<Pair<User, StatusEntity>> getMasterUser() {
-        HttpCookie cookie = AuthRepo.get(getApplication()).getSessionCookie();
-        if (cookie == null) {
+        if (AuthRepo.get(getApplication()).getSessionCookie() == null) {
             return new MutableLiveData<>(new Pair<>(null, new StatusEntity(StatusEntity.Status.EMPTY)));
         }
-        return mUserRepo.getMasterProfile(cookie);
+        return mUserRepo.getMasterProfile();
     }
 
     // TODO: редактирование юзера
+    public LiveData<StatusEntity> editMasterUser(EditProfile user) {
+        return mUserRepo.updateMasterUser(user);
+    }
 }

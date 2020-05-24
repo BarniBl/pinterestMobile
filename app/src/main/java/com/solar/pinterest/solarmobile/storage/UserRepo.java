@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.EditProfile;
+import com.solar.pinterest.solarmobile.network.models.EditProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.ProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
@@ -23,7 +25,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class UserRepo {
+public class UserRepo extends SolarRepoAbstract{
     private Application mContext;
     private SolarDatabase mDatabase;
     private static UserRepo instance;
@@ -43,7 +45,8 @@ public class UserRepo {
         mUser = new MutableLiveData<>();
     }
 
-    public LiveData<Pair<User, StatusEntity>> getMasterProfile(HttpCookie cookie) {
+    public LiveData<Pair<User, StatusEntity>> getMasterProfile() {
+        HttpCookie cookie = AuthRepo.get(mContext).getSessionCookie();
         Network.getInstance().profileData(cookie, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -77,6 +80,46 @@ public class UserRepo {
         });
 
         return mUser;
+    }
+
+    public LiveData<StatusEntity> updateMasterUser(EditProfile profile) {
+        MutableLiveData<StatusEntity> result = new MutableLiveData<>();
+        HttpCookie cookie = AuthRepo.get(mContext).getSessionCookie();
+        String csrfToken = AuthRepo.get(mContext).getCsrfToken();
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                result.postValue(new StatusEntity(
+                        StatusEntity.Status.FAILED,
+                        mContext.getString(R.string.network_answer_500)
+                ));
+//                errorSettingsTextView.setText("Сервер временно недоступен");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                EditProfileResponse editProfileResponse = gson.fromJson(response.body().string(), EditProfileResponse.class);
+                if (!editProfileResponse.body.info.equals("data successfully saved")) {
+                    result.postValue(new StatusEntity(
+                            StatusEntity.Status.FAILED,
+                            editProfileResponse.body.info
+                    ));
+                    return;
+                }
+
+                AuthRepo.get(mContext).setCsrfToken(editProfileResponse.csrf_token);
+                getMasterProfile();
+
+                result.postValue(new StatusEntity(
+                        StatusEntity.Status.SUCCESS
+                ));
+            }
+        };
+
+        Network.getInstance().editProfile(cookie, profile, csrfToken, callback);
+        return result;
     }
 
     public void putNetworkUser(User user) {
