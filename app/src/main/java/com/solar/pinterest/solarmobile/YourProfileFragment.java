@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +54,6 @@ public class YourProfileFragment extends Fragment {
 
         getPins();
         getBoards();
-        showBoards();
 
         errorTextYourProfile = view.findViewById(R.id.your_profile_view_error_field);
 
@@ -79,14 +79,14 @@ public class YourProfileFragment extends Fragment {
         });
 
         openBoardsBtn = view.findViewById(R.id.your_profile_buttons_board_button);
+        openPinsBtn = view.findViewById(R.id.your_profile_buttons_pin_button);
+
         openBoardsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showBoards();
             }
         });
-
-        openPinsBtn = view.findViewById(R.id.your_profile_buttons_pin_button);
         openPinsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +94,7 @@ public class YourProfileFragment extends Fragment {
             }
         });
 
+        showBoards();
         return view;
     }
 
@@ -145,6 +146,9 @@ public class YourProfileFragment extends Fragment {
     }
 
     private void showBoards() {
+        makeButtonBlack(openBoardsBtn);
+        makeButtonGray(openPinsBtn);
+
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(URL_KEY, dataForBoards.getUrl());
         bundle.putStringArrayList(TITLE_KEY, dataForBoards.getTitles());
@@ -156,6 +160,9 @@ public class YourProfileFragment extends Fragment {
     }
 
     private void showPins() {
+        makeButtonBlack(openPinsBtn);
+        makeButtonGray(openBoardsBtn);
+
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(URL_KEY, dataForPins.getUrl());
         bundle.putStringArrayList(TITLE_KEY, dataForPins.getTitles());
@@ -166,6 +173,15 @@ public class YourProfileFragment extends Fragment {
         replaceFragment(selectedFragment, forPinsBoardsPlace);
     }
 
+    private void makeButtonBlack(Button button) {
+        button.setBackgroundColor(Color.BLACK);
+        button.setTextColor(Color.WHITE);
+    }
+
+    private void makeButtonGray(Button button) {
+        button.setBackgroundColor(Color.rgb(215, 216, 216));
+        button.setTextColor(Color.BLACK);
+    }
     public void getBoards() {
         dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 1);
         dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 2);
