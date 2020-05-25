@@ -44,7 +44,7 @@ public class CreatePinFragment extends Fragment {
     ImageView pinImageView;
 
     TextInputLayout textInputTitle;
-    TextInputLayout textInputDiscription;
+    TextInputLayout textInputDescription;
     TextView errorTextView;
 
     List<DBSchema.Board> listOfUsersBoards;
@@ -63,15 +63,12 @@ public class CreatePinFragment extends Fragment {
             }
         });
 
-        BitmapDrawable draw = (BitmapDrawable) pinImageView.getDrawable();
-        Bitmap bitmap = draw.getBitmap();
-
         pinImageView = view.findViewById(R.id.create_pin_image_pin);
         toCreateBoard = view.findViewById(R.id.create_pin_go_to_create_board);
         boardTitleView = view.findViewById(R.id.create_pin_board_for_pin);
 
         textInputTitle = view.findViewById(R.id.create_pin_name_field);
-        textInputDiscription = view.findViewById(R.id.create_pin_description_field);
+        textInputDescription = view.findViewById(R.id.create_pin_description_field);
         errorTextView = view.findViewById(R.id.create_pin_error_field);
 
         appPinImageButton = view.findViewById(R.id.create_pin_add_image_button);
@@ -89,6 +86,7 @@ public class CreatePinFragment extends Fragment {
         });
 
         dialogWithBoards = view.findViewById(R.id.create_pin_choose_board);
+        dialogWithBoards.setEnabled(false);
         dialogWithBoards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,8 +101,10 @@ public class CreatePinFragment extends Fragment {
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
                 if (flag) {
-                    Pin pin = new Pin(currentBoardID, textInputTitle)
-                    ((YourProfileActivity) getActivity()).getViewModel().createPin();
+                    BitmapDrawable draw = (BitmapDrawable) pinImageView.getDrawable();
+                    Bitmap bitmap = draw.getBitmap();
+                    Pin pin = new Pin(currentBoardID, textInputTitle.getEditText().toString(), textInputDescription.getEditText().toString(), bitmap);
+                    ((YourProfileActivity) getActivity()).getViewModel().createPin(pin);
 
                     replaceFragment();
                 }
@@ -133,8 +133,11 @@ public class CreatePinFragment extends Fragment {
         if (listOfUsersBoards.size() == 0) {
             alertDialog.setMessage("Создайте доску");
         }
-
-        alertDialog.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
+        String[] ListItems = new String[listOfUsersBoards.size()];
+        for (int i = 0; i < listOfUsersBoards.size(); i++) {
+            ListItems[i] = listOfUsersBoards.get(i).getTitle();
+        }
+        alertDialog.setSingleChoiceItems(ListItems, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 listBoardItem = listOfUsersBoards.get(i);
@@ -193,7 +196,7 @@ public class CreatePinFragment extends Fragment {
 
         String input = textInputTitle.getEditText().getText().toString().trim();
         input += "\n";
-        input += textInputDiscription.getEditText().getText().toString().trim();
+        input += textInputDescription.getEditText().getText().toString().trim();
         input += "\n";
         input += boardTitleView.getText().toString().trim();
 
@@ -213,13 +216,20 @@ public class CreatePinFragment extends Fragment {
     public void onBoardsLoaded(Pair<List<DBSchema.Board>, StatusEntity> pair) {
         switch (pair.second.getStatus()) {
             case FAILED:
-
+                Log.println(Log.DEBUG, "board loading", pair.second.getMessage());
+                errorTextView.setText("error");
                 break;
             case EMPTY:
-
+                Log.println(Log.DEBUG, "board loading", "empty");
+                errorTextView.setText("empty");
                 break;
             case SUCCESS:
+                Log.println(Log.DEBUG, "board loading", "SUCCESS");
                 listOfUsersBoards = pair.first;
+                dialogWithBoards.setEnabled(true);
+                for (DBSchema.Board board : listOfUsersBoards) {
+                    Log.println(Log.DEBUG, "board loading", board.getTitle());
+                }
             default:
                 break;
         }
