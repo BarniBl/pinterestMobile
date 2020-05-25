@@ -2,6 +2,7 @@ package com.solar.pinterest.solarmobile;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -27,8 +28,15 @@ import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
 import java.util.List;
+import com.solar.pinterest.solarmobile.adapter.DataSourse;
+import com.solar.pinterest.solarmobile.profileFragments.ProfileBoardsListFragment;
+import com.solar.pinterest.solarmobile.profileFragments.ProfilePinsListFragment;
 
 public class YourProfileFragment extends Fragment {
+
+    String URL_KEY = "url";
+    String TITLE_KEY = "title";
+    String ID_KEY = "id";
 
     Button addPinsBoardsButton;
     Button settingsButton;
@@ -41,6 +49,14 @@ public class YourProfileFragment extends Fragment {
     Fragment selectedFragment;
 //    YourProfileViewModel mViewModel;
 
+    private DataSourse dataForPins = new DataSourse();
+    private DataSourse dataForBoards = new DataSourse();
+
+    Button openPinsBtn;
+    Button openBoardsBtn;
+
+    private int forPinsBoardsPlace = R.id.your_profile_doard_pin_f_place;
+    private int placeForChangeFragment = R.id.your_profile_view_relativeLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,6 +65,9 @@ public class YourProfileFragment extends Fragment {
 
         BottomNavigationView bottomNavBar = getActivity().findViewById(R.id.your_profile_bottom_navigation);
         bottomNavBar.getMenu().getItem(2).setChecked(true);
+
+        getPins();
+        getBoards();
 
         errorTextYourProfile = view.findViewById(R.id.your_profile_view_error_field);
 
@@ -69,9 +88,10 @@ public class YourProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 selectedFragment = new YourProfileEditingFragment();
-                replaceFragment(selectedFragment);
+                replaceFragment(selectedFragment, placeForChangeFragment);
             }
         });
+
 
         LiveData<Pair<User, StatusEntity>> liveUser = ((YourProfileActivity) getActivity()).getViewModel().getMasterUser();
         liveUser.observe(getViewLifecycleOwner(), pair -> {
@@ -91,6 +111,23 @@ public class YourProfileFragment extends Fragment {
 
         });
 
+        openBoardsBtn = view.findViewById(R.id.your_profile_buttons_board_button);
+        openPinsBtn = view.findViewById(R.id.your_profile_buttons_pin_button);
+
+        openBoardsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBoards();
+            }
+        });
+        openPinsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPins();
+            }
+        });
+
+        showBoards();
         return view;
     }
 
@@ -115,7 +152,7 @@ public class YourProfileFragment extends Fragment {
                 dialog.dismiss();
 
                 selectedFragment = new CreateBoardFragment();
-                replaceFragment(selectedFragment);
+                replaceFragment(selectedFragment, placeForChangeFragment);
             }
         });
 
@@ -125,17 +162,18 @@ public class YourProfileFragment extends Fragment {
                 dialog.dismiss();
 
                 selectedFragment = new CreatePinFragment();
-                replaceFragment(selectedFragment);
+                replaceFragment(selectedFragment, placeForChangeFragment);
             }
         });
 
         dialog.show();
     }
 
-    public void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment, int placeId) {
+        assert getFragmentManager() != null;
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.your_profile_view_relativeLayout, fragment)
+                .replace(placeId, fragment)
                 .addToBackStack(null)
                 .commit();
     }
@@ -180,5 +218,57 @@ public class YourProfileFragment extends Fragment {
             default:
                 break;
         }
+    }
+      
+    private void showBoards() {
+        makeButtonBlack(openBoardsBtn);
+        makeButtonGray(openPinsBtn);
+
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(URL_KEY, dataForBoards.getUrl());
+        bundle.putStringArrayList(TITLE_KEY, dataForBoards.getTitles());
+        bundle.putIntegerArrayList(ID_KEY, dataForBoards.getId());
+
+        selectedFragment = new ProfileBoardsListFragment();
+        selectedFragment.setArguments(bundle);
+        replaceFragment(selectedFragment, forPinsBoardsPlace);
+    }
+
+    private void showPins() {
+        makeButtonBlack(openPinsBtn);
+        makeButtonGray(openBoardsBtn);
+
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(URL_KEY, dataForPins.getUrl());
+        bundle.putStringArrayList(TITLE_KEY, dataForPins.getTitles());
+        bundle.putIntegerArrayList(ID_KEY, dataForPins.getId());
+
+        selectedFragment = new ProfilePinsListFragment();
+        selectedFragment.setArguments(bundle);
+        replaceFragment(selectedFragment, forPinsBoardsPlace);
+    }
+
+    private void makeButtonBlack(Button button) {
+        button.setBackgroundColor(Color.BLACK);
+        button.setTextColor(Color.WHITE);
+    }
+
+    private void makeButtonGray(Button button) {
+        button.setBackgroundColor(Color.rgb(215, 216, 216));
+        button.setTextColor(Color.BLACK);
+    }
+    public void getBoards() {
+        dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 1);
+        dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 2);
+        dataForBoards.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 3);
+        dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 4);
+        dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 5);
+        dataForBoards.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 6);
+    }
+
+    public void getPins() {
+        dataForPins.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 1);
+        dataForPins.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 2);
+        dataForPins.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 3);
     }
 }

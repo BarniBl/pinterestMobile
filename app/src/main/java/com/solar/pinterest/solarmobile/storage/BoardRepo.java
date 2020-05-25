@@ -46,15 +46,10 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class BoardRepo {
-    private static final String TAG = "Solar.AuthRepo";
+    private static final String TAG = "Solar.BoardRepo";
     private static BoardRepo instance;
     private Application mContext;
     private SolarDatabase mDatabase;
-
-    private CookieStore mCookieStore;
-    private SharedPreferences mSharedPreferences;
-
-    private String mCsrfToken;
 
     public static BoardRepo get(Application app) {
         if (instance == null) {
@@ -66,80 +61,23 @@ public class BoardRepo {
 
     private BoardRepo(Application app) {
         mContext = app;
-        EventBus.get().subscribe(new Event(mContext.getString(R.string.event_logout)), event -> logout());
 
         mDatabase = SolarDatabase.get(app);
-
-        if (CookieHandler.getDefault() == null) {
-            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-        }
-        mSharedPreferences = app.getSharedPreferences(
-                app.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        );
-        mCookieStore = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
-        loadCookies();
-    }
-
-    private void loadCookies() {
-        String storedCookie = mSharedPreferences.getString(mContext.getString(R.string.cookies_key), "");
-        URI uri = URI.create(mContext.getString(R.string.cookies_key));
-        if (storedCookie.isEmpty()) {
-            Log.e(TAG, "No cookie stored");
-            return;
-        }
-        setSessionCookie(new HttpCookie(mContext.getString(R.string.session_cookie), storedCookie));
-        Log.i(TAG, "Loaded " + 1 + " cookies to CookieStore");
-    }
-
-    @Nullable
-    public HttpCookie getSessionCookie() {
-        List<HttpCookie> cookieList = mCookieStore.get(
-                URI.create(mContext.getString(R.string.cookie_uri)));
-        for (HttpCookie cookie : cookieList) {
-            if (cookie.getName().equals(mContext.getString(R.string.session_cookie))) {
-                return cookie;
-            }
-        }
-        return null;
-    }
-
-    @SuppressLint("ApplySharedPref")
-    public void setSessionCookie(HttpCookie cookie) {
-        mCookieStore.add(URI.create(mContext.getString(R.string.cookie_uri)), cookie);
-
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(mContext.getString(R.string.cookies_key), cookie.getValue());
-        editor.commit();
-    }
-
-    public void setCsrfToken(String token) {
-        mCsrfToken = token;
-    }
-
-    public String getCsrfToken() {
-        return mCsrfToken;
-    }
-
-    public int getUserId() {
-        return mSharedPreferences.getInt(mContext.getString(R.string.userid_key), -1);
-    }
-
-    public boolean isAuthorized() {
-        return getSessionCookie() != null;
     }
 
     public MutableLiveData<StatusEntity> createBoard(@NonNull String title, @NonNull String description) {
         MutableLiveData<StatusEntity> progress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
 
         CreateBoardData boardData = new CreateBoardData(title, description);
-        Network.getInstance().addBoard(this.getSessionCookie(), boardData, this.getCsrfToken(), createBoardResponseCallback(progress));
+        Network.getInstance().addBoard(AuthRepo.get(mContext).getSessionCookie(), boardData,
+                AuthRepo.get(mContext).getCsrfToken(), createBoardResponseCallback(progress));
 
         return progress;
     }
 
     public MutableLiveData<Pair<List<DBSchema.Board>, StatusEntity>> getMyBoards() {
         MutableLiveData<Pair<List<DBSchema.Board>, StatusEntity>> result = new MutableLiveData<>();
-        Network.getInstance().getMyBoards(this.getSessionCookie(), getMyBoardsResponseCallback(result));
+        Network.getInstance().getMyBoards(AuthRepo.get(mContext).getSessionCookie(), getMyBoardsResponseCallback(result));
 
         return result;
     }
@@ -210,19 +148,6 @@ public class BoardRepo {
                 progress.postValue(Pair.create(listOfBoard, new StatusEntity(StatusEntity.Status.SUCCESS)));
             }
         };
-    }
-
-    @SuppressLint("ApplySharedPref")
-    private void logout() {
-        Log.e(TAG, "Clear AuthRepo");
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.remove(mContext.getString(R.string.cookies_key));
-        editor.remove(mContext.getString(R.string.userid_key));
-        editor.commit();
-
-        mCookieStore.removeAll();
-
-        mDatabase.clear();
     }
 
     private class BoardConverter {

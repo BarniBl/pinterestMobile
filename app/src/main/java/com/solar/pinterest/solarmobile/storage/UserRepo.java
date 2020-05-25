@@ -50,7 +50,7 @@ public class UserRepo extends SolarRepoAbstract{
     public LiveData<Pair<User, StatusEntity>> getMasterProfile(boolean forseUpdate) {
         HttpCookie cookie = AuthRepo.get(mContext).getSessionCookie();
 
-        if (forseUpdate) {
+        if (forseUpdate || AuthRepo.get(mContext).getCsrfToken() == null) {
             Log.e("Solar", "Forse update");
             getMasterUserFromNetwork();
         } else {

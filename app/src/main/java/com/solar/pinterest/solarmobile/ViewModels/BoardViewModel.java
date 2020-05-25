@@ -27,8 +27,4 @@ public class BoardViewModel extends AndroidViewModel {
     public LiveData<List<DBSchema.Pin>> getBoardPins(int id) {
         return mPinRepo.getBoardPins(id);
     }
-
-    public LiveData<StatusEntity> addBoard(Board board) {
-        return new MutableLiveData<>(new StatusEntity(StatusEntity.Status.EMPTY));
-    }
 }
