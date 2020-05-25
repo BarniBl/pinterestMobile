@@ -12,6 +12,7 @@ import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.CreatePinData;
+import com.solar.pinterest.solarmobile.network.models.Pin;
 import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.responses.CreatePinResponse;
 
@@ -88,11 +89,10 @@ public class PinRepo extends SolarRepoAbstract {
         return pinLD;
     }
 
-    public LiveData<StatusEntity> addPin(DBSchema.Pin pin) {
+    public LiveData<StatusEntity> addPin(Pin pin) {
         return put((MutableLiveData<StatusEntity> status) -> {
-            //TODO: check it
-            CreatePinData createPinData = new CreatePinData(pin.getTitle(), pin.getDescription(), pin.getBoardId());
-            Network.getInstance().createPin(AuthRepo.get(this.mContext).getSessionCookie(), "path", createPinData, AuthRepo.get(this.mContext).getCsrfToken(), createPinResponseCallback(status));
+            CreatePinData createPinData = new CreatePinData(pin.title, pin.description, pin.boardId);
+            Network.getInstance().createPin(AuthRepo.get(this.mContext).getSessionCookie(), pin.file, createPinData, AuthRepo.get(this.mContext).getCsrfToken(), createPinResponseCallback(status));
 
             status.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
         });

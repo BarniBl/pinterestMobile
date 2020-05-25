@@ -1,5 +1,7 @@
 package com.solar.pinterest.solarmobile.network.models;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Pin {
@@ -17,6 +19,8 @@ public class Pin {
     @SerializedName("is_deleted")
     public boolean isDeleted;
 
+    public Bitmap file;
+
     public Pin(int id, int authorID, int ownerID, int boardId, String path, String title, String description, boolean deleted) {
         this.id = id;
         this.authorID = authorID;
@@ -26,6 +30,13 @@ public class Pin {
         this.title = title;
         this.description = description;
         this.isDeleted = deleted;
+    }
+
+    public Pin(int boardId, String title, String description, Bitmap file) {
+        this.boardId = boardId;
+        this.title = title;
+        this.description = description;
+        this.file = file;
     }
 
     public Pin() {
