@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,8 @@ import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
 import com.solar.pinterest.solarmobile.network.models.Board;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.CreatePinData;
+import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
@@ -34,6 +37,8 @@ import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -132,12 +137,11 @@ public class BoardRepo {
         return progress;
     }
 
-    public MutableLiveData<StatusEntity> getMyBoards() {
-        MutableLiveData<StatusEntity> progress = new MutableLiveData<>(new StatusEntity(StatusEntity.Status.IN_PROGRESS));
+    public MutableLiveData<Pair<List<DBSchema.Board>, StatusEntity>> getMyBoards() {
+        MutableLiveData<Pair<List<DBSchema.Board>, StatusEntity>> result = new MutableLiveData<>();
+        Network.getInstance().getMyBoards(this.getSessionCookie(), getMyBoardsResponseCallback(result));
 
-        Network.getInstance().getMyBoards(this.getSessionCookie(), getMyBoardsResponseCallback(progress));
-
-        return progress;
+        return result;
     }
 
 
@@ -169,14 +173,14 @@ public class BoardRepo {
         };
     }
 
-    private Callback getMyBoardsResponseCallback(MutableLiveData<StatusEntity> progress) {
+    private Callback getMyBoardsResponseCallback(MutableLiveData<Pair<List<DBSchema.Board>, StatusEntity>> progress) {
         return new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                progress.postValue(new StatusEntity(
+                progress.postValue(Pair.create(null, new StatusEntity(
                         StatusEntity.Status.FAILED,
                         mContext.getString(R.string.network_answer_500)
-                ));
+                )));
             }
 
             @Override
@@ -185,19 +189,25 @@ public class BoardRepo {
                 Gson gson = builder.create();
                 MyBoardsResponse myBoardsResponse = gson.fromJson(response.body().string(), MyBoardsResponse.class);
                 if (!myBoardsResponse.body.info.equals("OK")) {
-                    progress.postValue(new StatusEntity(
+                    progress.postValue(Pair.create(null, new StatusEntity(
                             StatusEntity.Status.FAILED,
                             myBoardsResponse.body.info
-                    ));
+                    )));
                     return;
                 }
-
-                for(Board board : myBoardsResponse.body.boards) {
-                    mDatabase.putBoard(new BoardConverter().Net2DB(board));
+                Board[] boards = myBoardsResponse.body.boards;
+                List<DBSchema.Board> listOfBoard = new ArrayList<>();
+                Date date = new Date();
+                for (Board boa : boards) {
+                    DBSchema.Board board = new DBSchema.Board(boa.id, boa.category, boa.isDeleted, boa.ownerId, boa.title, boa.description, boa.viewPin, date);
+                    listOfBoard.add(board);
                 }
 
-                //UserRepo.get(mContext).putNetworkUser(user);
-                progress.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
+                for (DBSchema.Board board : listOfBoard) {
+                    mDatabase.putBoard(board);
+                }
+
+                progress.postValue(Pair.create(listOfBoard, new StatusEntity(StatusEntity.Status.SUCCESS)));
             }
         };
     }

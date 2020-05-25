@@ -1,15 +1,12 @@
 package com.solar.pinterest.solarmobile.network;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
-import com.solar.pinterest.solarmobile.network.models.Pin;
+import com.solar.pinterest.solarmobile.network.models.CreatePinData;
 import com.solar.pinterest.solarmobile.network.models.PinComment;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
-import com.solar.pinterest.solarmobile.network.models.User;
 
 import java.io.File;
 import java.net.HttpCookie;
@@ -21,7 +18,6 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.MultipartBody.Builder;
 
 
 public class Network implements NetworkInterface {
@@ -151,10 +147,10 @@ public class Network implements NetworkInterface {
     }
 
     @Override
-    public void createPin(HttpCookie cookie, String fileName, Pin pin, String csrf, Callback callbackFunc) {
+    public void createPin(HttpCookie cookie, String fileName, CreatePinData createPinData, String csrf, Callback callbackFunc) {
         String path = "/api/v1/pin";
 
-        String json = this.gson.toJson(pin);
+        String json = this.gson.toJson(createPinData);
         RequestBody body = RequestBody.create(JSON_TYPE, json);
 
         RequestBody requestBody = new okhttp3.MultipartBody.Builder().
