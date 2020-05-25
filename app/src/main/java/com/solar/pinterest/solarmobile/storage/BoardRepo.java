@@ -26,6 +26,7 @@ import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardRespo
 import com.solar.pinterest.solarmobile.network.models.LoginData;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 import com.solar.pinterest.solarmobile.network.models.responses.MyBoardsResponse;
+import com.solar.pinterest.solarmobile.network.tools.TimestampConverter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -133,7 +134,6 @@ public class BoardRepo {
         CreateBoardData boardData = new CreateBoardData(title, description);
         Network.getInstance().addBoard(this.getSessionCookie(), boardData, this.getCsrfToken(), createBoardResponseCallback(progress));
 
-        //TODO ADD CURRENT BOARD TO STORE
         return progress;
     }
 
@@ -223,5 +223,12 @@ public class BoardRepo {
         mCookieStore.removeAll();
 
         mDatabase.clear();
+    }
+
+    private class BoardConverter {
+        public DBSchema.Board Net2DB(Board net) {
+            return new DBSchema.Board(net.id, net.category, net.isDeleted, net.ownerId, net.title, net.description,
+                    net.viewPin, TimestampConverter.toDate(net.createdTime));
+        }
     }
 }

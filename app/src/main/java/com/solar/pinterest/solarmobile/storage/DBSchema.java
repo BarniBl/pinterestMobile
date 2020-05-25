@@ -16,6 +16,7 @@ import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 import androidx.room.Update;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,18 @@ import java.util.Date;
 import java.util.List;
 
 public class DBSchema {
+    public static class DatabaseObject {
+        long timestamp;
+
+        DatabaseObject() {
+            timestamp = System.currentTimeMillis();
+        }
+
+        public boolean isRotten(long shellLife) {
+            return (timestamp + shellLife) < System.currentTimeMillis();
+        }
+    }
+
     @Dao
     public interface UserDao {
         @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -42,7 +55,7 @@ public class DBSchema {
     @Entity(indices = {
             @Index("username"),
     })
-    public static class User {
+    public static class User extends DatabaseObject {
         @PrimaryKey private int id;
         private String username;
         private String name;
@@ -178,7 +191,7 @@ public class DBSchema {
     @Entity(indices = {
             @Index("board_id"),
     })
-    public static class Pin {
+    public static class Pin extends DatabaseObject {
         @PrimaryKey private int id;
         private String authorUsername;
         private String ownerUsername;
@@ -302,7 +315,7 @@ public class DBSchema {
     @Entity(indices = {
             @Index("owner_id"),
     })
-    public static class Board {
+    public static class Board extends DatabaseObject{
         @PrimaryKey
         private int id;
         private String category;

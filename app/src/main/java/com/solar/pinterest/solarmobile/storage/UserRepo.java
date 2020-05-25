@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solar.pinterest.solarmobile.R;
 import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.Board;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.responses.EditProfileResponse;
 import com.solar.pinterest.solarmobile.network.models.responses.ProfileResponse;
@@ -46,40 +47,24 @@ public class UserRepo extends SolarRepoAbstract{
         mUser = new MutableLiveData<>();
     }
 
-    public LiveData<Pair<User, StatusEntity>> getMasterProfile() {
+    public LiveData<Pair<User, StatusEntity>> getMasterProfile(boolean forseUpdate) {
         HttpCookie cookie = AuthRepo.get(mContext).getSessionCookie();
-        Network.getInstance().profileData(cookie, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                mUser.postValue(new Pair<>(null, new StatusEntity(
-                        StatusEntity.Status.FAILED,
-                        mContext.getString(R.string.network_answer_500)
-                )));
-            }
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                Log.e("UserRepo", "Response got getting user");
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
-                if (!profileResponse.body.info.equals(mContext.getString(R.string.network_answer_OK))) {
-                    mUser.postValue(new Pair<>(null, new StatusEntity(
-                            StatusEntity.Status.FAILED,
-                            profileResponse.body.info
-                    )));
+        if (forseUpdate) {
+            Log.e("Solar", "Forse update");
+            getMasterUserFromNetwork();
+        } else {
+            mDatabase.getUser(AuthRepo.get(mContext).getUserId(), (user) -> {
+                if (user == null) {
+                    Log.e("Solar", "No masteruser in database");
+                    getMasterUserFromNetwork();
                     return;
                 }
-                AuthRepo.get(mContext).setCsrfToken(profileResponse.csrf_token);
-                User user = profileResponse.body.user;
-                Log.e("UserRepo", "OK got getting user");
-                putNetworkUser(user);
-
-                mUser.postValue(new Pair<>(user, new StatusEntity(
-                        StatusEntity.Status.SUCCESS
-                )));
-            }
-        });
+                Log.e("Solar", "Got user from db");
+                mUser.postValue(Pair.create(new UserConverter().BD2Net(user),
+                        new StatusEntity(StatusEntity.Status.SUCCESS)));
+            });
+        }
 
         return mUser;
     }
@@ -116,7 +101,8 @@ public class UserRepo extends SolarRepoAbstract{
 
                 AuthRepo.get(mContext).setCsrfToken(editProfileResponse.csrf_token);
                 Log.e("UserRepo", "OKgot editing user");
-                getMasterProfile();
+                getMasterUserFromNetwork();
+//                getMasterProfile();
 
 
                 result.postValue(new StatusEntity(
@@ -131,8 +117,60 @@ public class UserRepo extends SolarRepoAbstract{
 
     public void putNetworkUser(User user) {
         mDatabase.putUser(
-                new DBSchema.User(user.id, user.username, user.name, user.surname,
-                        user.email, user.age, user.status, user.avatarDir,
-                        user.isActive, TimestampConverter.toDate(user.createdTime), false));
+                new UserConverter().Net2DB(user));
+//                new DBSchema.User(user.id, user.username, user.name, user.surname,
+//                        user.email, user.age, user.status, user.avatarDir,
+//                        user.isActive, TimestampConverter.toDate(user.createdTime), false));
+    }
+
+    private void getMasterUserFromNetwork() {
+
+        Network.getInstance().profileData(AuthRepo.get(mContext).getSessionCookie(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                mUser.postValue(new Pair<>(null, new StatusEntity(
+                        StatusEntity.Status.FAILED,
+                        mContext.getString(R.string.network_answer_500)
+                )));
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.e("UserRepo", "Response got getting user");
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                ProfileResponse profileResponse = gson.fromJson(response.body().string(), ProfileResponse.class);
+                if (!profileResponse.body.info.equals(mContext.getString(R.string.network_answer_OK))) {
+                    mUser.postValue(new Pair<>(null, new StatusEntity(
+                            StatusEntity.Status.FAILED,
+                            profileResponse.body.info
+                    )));
+                    return;
+                }
+                AuthRepo.get(mContext).setCsrfToken(profileResponse.csrf_token);
+                User user = profileResponse.body.user;
+                AuthRepo.get(mContext).setUserId(user.id);
+                Log.e("UserRepo", "OK got getting user");
+                putNetworkUser(user);
+
+                mUser.postValue(new Pair<>(user, new StatusEntity(
+                        StatusEntity.Status.SUCCESS
+                )));
+            }
+        });
+    }
+
+    private class UserConverter {
+        public DBSchema.User Net2DB(User net) {
+            return new DBSchema.User(net.id, net.username, net.name, net.surname,
+                    net.email, net.age, net.status, net.avatarDir,
+                    net.isActive, TimestampConverter.toDate(net.createdTime), false);
+        }
+
+        public User BD2Net(DBSchema.User db) {
+            return new User(db.getId(), db.getUsername(), db.getName(), db.getSurname(),
+                    db.getEmail(), db.getAge(), db.getStatus(), db.getAvatar(), db.isActive(),
+                    TimestampConverter.fromDate(db.getCreated()));
+        }
     }
 }

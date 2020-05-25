@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -77,9 +78,16 @@ public class YourProfileFragment extends Fragment {
             onUserLoaded(pair);
         });
 
+
         LiveData<Pair<List<DBSchema.Board>, StatusEntity>> liveBoards = ((YourProfileActivity) getActivity()).getViewModel().getMyBoards();
         liveBoards.observe(getViewLifecycleOwner(), pair -> {
             onBoardsLoaded(pair);
+
+        SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.your_profile_swipe_refresh);
+        pullToRefresh.setOnRefreshListener(() -> {
+            ((YourProfileActivity) getActivity()).getViewModel().getMasterUser(true);
+            pullToRefresh.setRefreshing(false);
+
         });
 
         return view;
