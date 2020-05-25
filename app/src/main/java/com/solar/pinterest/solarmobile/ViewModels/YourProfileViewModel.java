@@ -8,20 +8,26 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.solar.pinterest.solarmobile.network.models.Board;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.User;
 import com.solar.pinterest.solarmobile.storage.AuthRepo;
+import com.solar.pinterest.solarmobile.storage.BoardRepo;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
 import com.solar.pinterest.solarmobile.storage.UserRepo;
 
 import java.net.HttpCookie;
+import java.util.List;
 
 public class YourProfileViewModel extends AndroidViewModel {
     private UserRepo mUserRepo;
+    private BoardRepo mBoardRepo;
 
     public YourProfileViewModel(@NonNull Application application) {
         super(application);
         mUserRepo = UserRepo.get(getApplication());
+        mBoardRepo= BoardRepo.get(getApplication());
     }
 
     public LiveData<Pair<User, StatusEntity>> getMasterUser() {
@@ -31,8 +37,11 @@ public class YourProfileViewModel extends AndroidViewModel {
         return mUserRepo.getMasterProfile();
     }
 
-    // TODO: редактирование юзера
     public LiveData<StatusEntity> editMasterUser(EditProfile user) {
         return mUserRepo.updateMasterUser(user);
+    }
+
+    public LiveData<Pair<List<DBSchema.Board>, StatusEntity>> getMyBoards() {
+        return mBoardRepo.getMyBoards();
     }
 }

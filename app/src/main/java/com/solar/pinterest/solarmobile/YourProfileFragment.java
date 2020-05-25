@@ -20,8 +20,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.solar.pinterest.solarmobile.ViewModels.YourProfileViewModel;
+import com.solar.pinterest.solarmobile.network.models.Board;
 import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
 import com.solar.pinterest.solarmobile.storage.StatusEntity;
+
+import java.util.List;
 
 public class YourProfileFragment extends Fragment {
 
@@ -73,6 +77,11 @@ public class YourProfileFragment extends Fragment {
             onUserLoaded(pair);
         });
 
+        LiveData<Pair<List<DBSchema.Board>, StatusEntity>> liveBoards = ((YourProfileActivity) getActivity()).getViewModel().getMyBoards();
+        liveBoards.observe(getViewLifecycleOwner(), pair -> {
+            onBoardsLoaded(pair);
+        });
+
         return view;
     }
 
@@ -80,9 +89,9 @@ public class YourProfileFragment extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.create_pin_board_choose_card);
 
-        Button dialogCloseButton = (Button)dialog.findViewById(R.id.create_pin_board_choose_card_close);
-        Button dialogChooseBoard = (Button)dialog.findViewById(R.id.create_pin_board_choose_card_add_board);
-        Button dialogChoosePin = (Button)dialog.findViewById(R.id.create_pin_board_choose_card_add_pin);
+        Button dialogCloseButton = (Button) dialog.findViewById(R.id.create_pin_board_choose_card_close);
+        Button dialogChooseBoard = (Button) dialog.findViewById(R.id.create_pin_board_choose_card_add_board);
+        Button dialogChoosePin = (Button) dialog.findViewById(R.id.create_pin_board_choose_card_add_pin);
 
         dialogCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +152,22 @@ public class YourProfileFragment extends Fragment {
 
                 yourProfileStatus.setText(user.status);
                 yourProfileNickname.setText(user.username);
+            default:
+                break;
+        }
+    }
+
+
+    public void onBoardsLoaded(Pair<List<DBSchema.Board>, StatusEntity> pair) {
+        switch (pair.second.getStatus()) {
+            case FAILED:
+
+                break;
+            case EMPTY:
+
+                break;
+            case SUCCESS:
+
             default:
                 break;
         }
