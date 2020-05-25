@@ -47,4 +47,9 @@ public class YourProfileViewModel extends AndroidViewModel {
     public LiveData<Pair<List<DBSchema.Board>, StatusEntity>> getMyBoards() {
         return mBoardRepo.getMyBoards();
     }
+
+    public LiveData<StatusEntity> addBoard(Board board) {
+        return mBoardRepo.createBoard(board.title, board.description);
+//        return new MutableLiveData<>(new StatusEntity(StatusEntity.Status.EMPTY));
+    }
 }

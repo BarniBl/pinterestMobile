@@ -218,6 +218,7 @@ public class YourProfileFragment extends Fragment {
             default:
                 break;
         }
+    }
       
     private void showBoards() {
         makeButtonBlack(openBoardsBtn);
