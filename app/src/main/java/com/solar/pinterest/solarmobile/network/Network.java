@@ -219,7 +219,7 @@ public class Network implements NetworkInterface {
 
     @Override
     public void getMyBoards(HttpCookie cookie, Callback callbackFunc) {
-        String path = "api/v1/board/list/my";
+        String path = "/api/v1/board/list/my";
 
         Request request = new Request.Builder()
                 .url(BASE_URL + path)
