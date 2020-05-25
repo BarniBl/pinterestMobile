@@ -1,6 +1,7 @@
 package com.solar.pinterest.solarmobile.storage;
 
 import android.app.Application;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.lifecycle.LiveData;
@@ -118,6 +119,7 @@ public class PinRepo extends SolarRepoAbstract {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.d("error", "-------------" + response.body());
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 CreatePinResponse createPinResponse = gson.fromJson(response.body().string(), CreatePinResponse.class);
