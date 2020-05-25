@@ -82,6 +82,7 @@ public class YourProfileFragment extends Fragment {
         LiveData<Pair<List<DBSchema.Board>, StatusEntity>> liveBoards = ((YourProfileActivity) getActivity()).getViewModel().getMyBoards();
         liveBoards.observe(getViewLifecycleOwner(), pair -> {
             onBoardsLoaded(pair);
+        });
 
         SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.your_profile_swipe_refresh);
         pullToRefresh.setOnRefreshListener(() -> {

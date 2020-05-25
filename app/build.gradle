@@ -60,5 +60,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-common:2.3.0-alpha03'
     implementation 'androidx.lifecycle:lifecycle-common:2.3.0-alpha02'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01'
 
 }
