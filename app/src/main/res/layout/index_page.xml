@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:layout_height="match_parent">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Главная страница"
-        android:textColor="@android:color/white"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:layout_height="match_parent"
+        android:id="@+id/index_page_recycler_view"
+        android:orientation="vertical">
 
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>
