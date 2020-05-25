@@ -55,5 +55,10 @@ public class YourProfileViewModel extends AndroidViewModel {
 
     public LiveData<StatusEntity> createPin(Pin pin) {
         return mPinRepo.addPin(pin);
+
+    public LiveData<StatusEntity> addBoard(Board board) {
+        return mBoardRepo.createBoard(board.title, board.description);
+//        return new MutableLiveData<>(new StatusEntity(StatusEntity.Status.EMPTY));
+
     }
 }
