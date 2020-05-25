@@ -208,6 +208,9 @@ public class DBSchema {
             this.id = id;
         }
 
+        public Pin(int id, String toString, String toString1, Date date, String pinDir, String title, String description, boolean isDeleted) {
+        }
+
         public int getId() {
             return id;
         }

@@ -6,13 +6,31 @@ import android.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.R;
+import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.CreatePinData;
+import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
+import com.solar.pinterest.solarmobile.network.models.responses.CreatePinResponse;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 public class PinRepo extends SolarRepoAbstract {
     private SolarDatabase mDatabase;
     private static PinRepo instance;
+    private Application mContext;
 
     public static PinRepo get(Application context) {
         if (instance == null) {
@@ -22,6 +40,7 @@ public class PinRepo extends SolarRepoAbstract {
     }
 
     private PinRepo(Application context) {
+        mContext = context;
         mDatabase = SolarDatabase.get(context);
     }
 
@@ -69,10 +88,12 @@ public class PinRepo extends SolarRepoAbstract {
         return pinLD;
     }
 
-    public LiveData<StatusEntity> putPin(DBSchema.Pin pin) {
+    public LiveData<StatusEntity> addPin(DBSchema.Pin pin) {
         return put((MutableLiveData<StatusEntity> status) -> {
-            //TODO: goto network
-            mDatabase.putPin(pin);
+            //TODO: check it
+            CreatePinData createPinData = new CreatePinData(pin.getTitle(), pin.getDescription(), pin.getBoardId());
+            Network.getInstance().createPin(AuthRepo.get(this.mContext).getSessionCookie(), "path", createPinData, AuthRepo.get(this.mContext).getCsrfToken(), createPinResponseCallback(status));
+
             status.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
         });
     }
@@ -83,5 +104,37 @@ public class PinRepo extends SolarRepoAbstract {
             mDatabase.putPins(pins);
             status.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
         });
+    }
+
+    private Callback createPinResponseCallback(MutableLiveData<StatusEntity> progress) {
+        return new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                progress.postValue(new StatusEntity(
+                        StatusEntity.Status.FAILED,
+                        mContext.getString(R.string.network_answer_500)
+                ));
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                CreatePinResponse createPinResponse = gson.fromJson(response.body().string(), CreatePinResponse.class);
+                if (!createPinResponse.body.info.equals("data successfully saved")) {
+                    progress.postValue(new StatusEntity(
+                            StatusEntity.Status.FAILED,
+                            createPinResponse.body.info
+                    ));
+                    return;
+                }
+
+                Date date = new Date();
+                DBSchema.Pin pin = new DBSchema.Pin(createPinResponse.body.pin.id, Integer.toString(createPinResponse.body.pin.authorID), Integer.toString(createPinResponse.body.pin.ownerID), createPinResponse.body.pin.boardId, date, createPinResponse.body.pin.pinDir, createPinResponse.body.pin.title, createPinResponse.body.pin.description, createPinResponse.body.pin.isDeleted);
+                mDatabase.putPin(pin);
+
+                progress.postValue(new StatusEntity(StatusEntity.Status.SUCCESS));
+            }
+        };
     }
 }
