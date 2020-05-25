@@ -218,6 +218,7 @@ public class YourProfileFragment extends Fragment {
             case SUCCESS:
                 Toast.makeText(getActivity(), "SUCCESS", Toast.LENGTH_SHORT).show();
                 getBoards(pair.first);
+                showBoards();
             default:
                 break;
         }
