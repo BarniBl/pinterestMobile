@@ -31,7 +31,7 @@ public class PinViewModel extends AndroidViewModel {
         return getPin(mCurrentId);
     }
 
-    public LiveData<StatusEntity> addPin(DBSchema.Pin pin) {
-        return mPinRepo.addPin(pin);
-    }
+//    public LiveData<StatusEntity> addPin(DBSchema.Pin pin) {
+//        return mPinRepo.addPin(pin);
+//    }
 }

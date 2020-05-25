@@ -3,8 +3,11 @@ package com.solar.pinterest.solarmobile;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +18,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.solar.pinterest.solarmobile.network.models.Pin;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
+import com.solar.pinterest.solarmobile.storage.StatusEntity;
+
+import java.util.List;
 
 public class CreatePinFragment extends Fragment {
 
     public static final int PICK_IMAGE = 1;
     String[] listItems;
-    String listBoardItem = "";
+    DBSchema.Board listBoardItem;
+    int currentBoardID;
 
     Button closeButton;
     Button appPinImageButton;
@@ -34,8 +44,10 @@ public class CreatePinFragment extends Fragment {
     ImageView pinImageView;
 
     TextInputLayout textInputTitle;
-    TextInputLayout textInputDiscription;
+    TextInputLayout textInputDescription;
     TextView errorTextView;
+
+    List<DBSchema.Board> listOfUsersBoards;
 
     @Nullable
     @Override
@@ -56,7 +68,7 @@ public class CreatePinFragment extends Fragment {
         boardTitleView = view.findViewById(R.id.create_pin_board_for_pin);
 
         textInputTitle = view.findViewById(R.id.create_pin_name_field);
-        textInputDiscription = view.findViewById(R.id.create_pin_description_field);
+        textInputDescription = view.findViewById(R.id.create_pin_description_field);
         errorTextView = view.findViewById(R.id.create_pin_error_field);
 
         appPinImageButton = view.findViewById(R.id.create_pin_add_image_button);
@@ -74,11 +86,11 @@ public class CreatePinFragment extends Fragment {
         });
 
         dialogWithBoards = view.findViewById(R.id.create_pin_choose_board);
+        dialogWithBoards.setEnabled(false);
         dialogWithBoards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Необходимо присвоить значение ListItems
-                listItems = new String[]{"Board1", "Board2", "Board3"};
+
                 showBoardsDialog();
             }
         });
@@ -89,16 +101,26 @@ public class CreatePinFragment extends Fragment {
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
                 if (flag) {
+                    BitmapDrawable draw = (BitmapDrawable) pinImageView.getDrawable();
+                    Bitmap bitmap = draw.getBitmap();
+                    Pin pin = new Pin(currentBoardID, textInputTitle.getEditText().toString(), textInputDescription.getEditText().toString(), bitmap);
+                    ((YourProfileActivity) getActivity()).getViewModel().createPin(pin);
+
                     replaceFragment();
                 }
             }
         });
+
+        LiveData<Pair<List<DBSchema.Board>, StatusEntity>> liveBoards = ((YourProfileActivity) getActivity()).getViewModel().getMyBoards();
+        liveBoards.observe(getViewLifecycleOwner(), pair -> {
+            onBoardsLoaded(pair);
+        });
+
         return view;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && data != null) {
             pinImageView.setImageURI(data.getData());
         }
@@ -108,15 +130,19 @@ public class CreatePinFragment extends Fragment {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
         alertDialog.setTitle("Выберите доску");
 
-        if (listItems.length == 0) {
+        if (listOfUsersBoards.size() == 0) {
             alertDialog.setMessage("Создайте доску");
         }
-
-        alertDialog.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
+        String[] ListItems = new String[listOfUsersBoards.size()];
+        for (int i = 0; i < listOfUsersBoards.size(); i++) {
+            ListItems[i] = listOfUsersBoards.get(i).getTitle();
+        }
+        alertDialog.setSingleChoiceItems(ListItems, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-                listBoardItem = listItems[i];
-                boardTitleView.setText(listBoardItem);
+                listBoardItem = listOfUsersBoards.get(i);
+                boardTitleView.setText(listBoardItem.getTitle());
+                currentBoardID = listBoardItem.getId();
                 dialog.dismiss();
             }
         });
@@ -158,7 +184,7 @@ public class CreatePinFragment extends Fragment {
             errorTextView.setText("Выберите изображение");
             return false;
         }
-        return  true;
+        return true;
     }
 
     private boolean confirmInput(View v) {
@@ -170,7 +196,7 @@ public class CreatePinFragment extends Fragment {
 
         String input = textInputTitle.getEditText().getText().toString().trim();
         input += "\n";
-        input += textInputDiscription.getEditText().getText().toString().trim();
+        input += textInputDescription.getEditText().getText().toString().trim();
         input += "\n";
         input += boardTitleView.getText().toString().trim();
 
@@ -185,5 +211,27 @@ public class CreatePinFragment extends Fragment {
                 .replace(R.id.your_profile_view_relativeLayout, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void onBoardsLoaded(Pair<List<DBSchema.Board>, StatusEntity> pair) {
+        switch (pair.second.getStatus()) {
+            case FAILED:
+                Log.println(Log.DEBUG, "board loading", pair.second.getMessage());
+                errorTextView.setText("error");
+                break;
+            case EMPTY:
+                Log.println(Log.DEBUG, "board loading", "empty");
+                errorTextView.setText("empty");
+                break;
+            case SUCCESS:
+                Log.println(Log.DEBUG, "board loading", "SUCCESS");
+                listOfUsersBoards = pair.first;
+                dialogWithBoards.setEnabled(true);
+                for (DBSchema.Board board : listOfUsersBoards) {
+                    Log.println(Log.DEBUG, "board loading", board.getTitle());
+                }
+            default:
+                break;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.solar.pinterest.solarmobile.network;
 
+import android.graphics.Bitmap;
+
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
 import com.solar.pinterest.solarmobile.network.models.LoginData;
@@ -22,9 +24,9 @@ public interface NetworkInterface {
 
     void editProfile(HttpCookie cookie, EditProfile profile, String csrf, Callback callbackFunc);
 
-    void editProfilePicture(HttpCookie cookie, String fileName, String csrf, Callback callbackFunc);
+    void editProfilePicture(HttpCookie cookie, Bitmap file, String csrf, Callback callbackFunc);
 
-    void createPin(HttpCookie cookie, String fileName, CreatePinData createPinData, String csrf, Callback callbackFunc);
+    void createPin(HttpCookie cookie, Bitmap file, CreatePinData createPinData, String csrf, Callback callbackFunc);
 
     void getPinsList(HttpCookie cookie, int limit, int sinceID, Callback callbackFunc);
 
