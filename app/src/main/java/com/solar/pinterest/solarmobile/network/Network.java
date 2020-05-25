@@ -1,5 +1,7 @@
 package com.solar.pinterest.solarmobile.network;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.Gson;
 import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
 import com.solar.pinterest.solarmobile.network.models.EditProfile;
@@ -8,6 +10,7 @@ import com.solar.pinterest.solarmobile.network.models.CreatePinData;
 import com.solar.pinterest.solarmobile.network.models.PinComment;
 import com.solar.pinterest.solarmobile.network.models.RegistrationData;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.HttpCookie;
 
@@ -126,14 +129,18 @@ public class Network implements NetworkInterface {
     }
 
     @Override
-    public void editProfilePicture(HttpCookie cookie, String fileName, String csrf, Callback callbackFunc) {
+    public void editProfilePicture(HttpCookie cookie, Bitmap file, String csrf, Callback callbackFunc) {
         String path = "/api/v1/profile/data";
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        file.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
 
         RequestBody requestBody = new okhttp3.MultipartBody.Builder().
                 setType(MultipartBody.FORM)
                 .addPart(
                         Headers.of("Content-Disposition", "form-data; name=\"profilePicture\""),
-                        RequestBody.create(MEDIA_TYPE_PNG, new File(fileName)))
+                        RequestBody.create(byteArray))
                 .build();
 
         Request request = new Request.Builder()
@@ -147,8 +154,12 @@ public class Network implements NetworkInterface {
     }
 
     @Override
-    public void createPin(HttpCookie cookie, String fileName, CreatePinData createPinData, String csrf, Callback callbackFunc) {
+    public void createPin(HttpCookie cookie, Bitmap file, CreatePinData createPinData, String csrf, Callback callbackFunc) {
         String path = "/api/v1/pin";
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        file.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
 
         String json = this.gson.toJson(createPinData);
         RequestBody body = RequestBody.create(JSON_TYPE, json);
@@ -157,7 +168,7 @@ public class Network implements NetworkInterface {
                 setType(MultipartBody.FORM)
                 .addPart(
                         Headers.of("Content-Disposition", "form-data; name=\"pinPicture\""),
-                        RequestBody.create(MEDIA_TYPE_PNG, new File(fileName)))
+                        RequestBody.create(byteArray))
                 .addPart(Headers.of("Content-Disposition", "form-data; name=\"pin\""),
                         body)
                 .build();
@@ -219,7 +230,7 @@ public class Network implements NetworkInterface {
 
     @Override
     public void getMyBoards(HttpCookie cookie, Callback callbackFunc) {
-        String path = "api/v1/board/list/my";
+        String path = "/api/v1/board/list/my";
 
         Request request = new Request.Builder()
                 .url(BASE_URL + path)
