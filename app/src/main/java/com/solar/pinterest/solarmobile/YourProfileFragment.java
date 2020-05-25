@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,7 +69,7 @@ public class YourProfileFragment extends Fragment {
         bottomNavBar.getMenu().getItem(2).setChecked(true);
 
         getPins();
-        getBoards();
+//        getBoards();
 
         errorTextYourProfile = view.findViewById(R.id.your_profile_view_error_field);
 
@@ -127,7 +129,6 @@ public class YourProfileFragment extends Fragment {
             }
         });
 
-        showBoards();
         return view;
     }
 
@@ -208,19 +209,24 @@ public class YourProfileFragment extends Fragment {
     public void onBoardsLoaded(Pair<List<DBSchema.Board>, StatusEntity> pair) {
         switch (pair.second.getStatus()) {
             case FAILED:
-
+                Log.d("errorprofile", "-----" + pair.second.getMessage());
+                Toast.makeText(getActivity(), "FAILED Не удалось подгрузить доски", Toast.LENGTH_SHORT).show();
                 break;
             case EMPTY:
-
+                Toast.makeText(getActivity(), "EMPTY", Toast.LENGTH_SHORT).show();
                 break;
             case SUCCESS:
-
+                Toast.makeText(getActivity(), "SUCCESS", Toast.LENGTH_SHORT).show();
+                getBoards(pair.first);
+                showBoards();
             default:
                 break;
         }
     }
       
     private void showBoards() {
+        Log.d("errorprofile", "-----Где мои доски?");
+        Log.d("errorprofile", "-----" + dataForBoards.getDataSize());
         makeButtonBlack(openBoardsBtn);
         makeButtonGray(openPinsBtn);
 
@@ -257,13 +263,11 @@ public class YourProfileFragment extends Fragment {
         button.setBackgroundColor(Color.rgb(215, 216, 216));
         button.setTextColor(Color.BLACK);
     }
-    public void getBoards() {
-        dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 1);
-        dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 2);
-        dataForBoards.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 3);
-        dataForBoards.addDataItem("https://i.redd.it/obx4zydshg601.jpg", "Привет!", 4);
-        dataForBoards.addDataItem("https://i.redd.it/glin0nwndo501.jpg", "", 5);
-        dataForBoards.addDataItem("https://i.redd.it/k98uzl68eh501.jpg", "Как у тебя дела?", 6);
+    public void getBoards(List<DBSchema.Board> boards) {
+
+        for (int i = 0; i < boards.size(); i++) {
+            dataForBoards.addDataItem("https://solarsunrise.ru/" + boards.get(i).getPreview(), boards.get(i).getTitle(), boards.get(i).getId());
+        }
     }
 
     public void getPins() {
