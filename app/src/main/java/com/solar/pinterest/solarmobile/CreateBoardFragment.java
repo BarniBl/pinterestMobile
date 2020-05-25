@@ -7,15 +7,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.solar.pinterest.solarmobile.network.Network;
+import com.solar.pinterest.solarmobile.network.models.CreateBoardData;
+import com.solar.pinterest.solarmobile.network.models.responses.CreateBoardResponse;
+import com.solar.pinterest.solarmobile.storage.AuthRepo;
+import com.solar.pinterest.solarmobile.storage.DBInterface;
+import com.solar.pinterest.solarmobile.storage.DBSchema;
 
-public class CreateBoardFragment extends Fragment {
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+public class CreateBoardFragment extends Fragment implements DBInterface.Listener {
 
     Button closeButton;
     Button okButton;
@@ -47,13 +62,38 @@ public class CreateBoardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
-                if (flag) {
-                    // Ваш TODO CODE
-                    replaceFragment();
+              
+                if (!flag) {
+                    return;
                 }
+              
+                CreateBoardData createBoardData = new CreateBoardData(textInputTitle.getEditText().getText().toString(), textInputDiscription.getEditText().getText().toString());
+
+                Callback createBoardCallback = new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        errorTextView.setText("Сервер временно недоступен");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        GsonBuilder builder = new GsonBuilder();
+                        Gson gson = builder.create();
+                        CreateBoardResponse createBoardResponse = gson.fromJson(response.body().string(), CreateBoardResponse.class);
+                        if (!createBoardResponse.body.info.equals("data successfully saved")) {
+                            errorTextView.setText(createBoardResponse.body.info);
+                            return;
+                        }
+
+                        AuthRepo.get(getActivity().getApplication()).setCsrfToken(createBoardResponse.csrf_token);
+
+                        replaceFragment();
+                    }
+                };
+
+                Network.getInstance().addBoard(AuthRepo.get(getActivity().getApplication()).getSessionCookie(), createBoardData, AuthRepo.get(getActivity().getApplication()).getCsrfToken(), createBoardCallback);
             }
         });
-
         return view;
     }
 
@@ -88,5 +128,10 @@ public class CreateBoardFragment extends Fragment {
                 .replace(R.id.your_profile_view_relativeLayout, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onReadUser(DBSchema.User user) {
+      
     }
 }

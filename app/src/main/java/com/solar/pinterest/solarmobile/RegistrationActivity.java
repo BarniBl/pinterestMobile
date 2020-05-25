@@ -1,19 +1,21 @@
 package com.solar.pinterest.solarmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.solar.pinterest.solarmobile.ViewModels.AuthViewModel;
 
 public class RegistrationActivity extends AppCompatActivity {
+    private static final String TAG = "Solar.RegistrationActiv";
 
     Button toLoginBtn;
     Button registrationBtn;
@@ -23,11 +25,29 @@ public class RegistrationActivity extends AppCompatActivity {
     TextInputLayout textInputPassword;
     TextView errorTextView;
 
+    AuthViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration);
+
+        mViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        mViewModel.getAuthStatus().observe(this, statusEntity -> {
+            switch (statusEntity.getStatus()) {
+                case FAILED:
+                    errorTextView.setText(statusEntity.getMessage());
+                    break;
+                case SUCCESS:
+                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
+                    startActivity(intent);
+                    break;
+                default:
+                    Log.e(TAG, "Unexpected authStatus value: " + statusEntity.getStatus().toString());
+            }
+
+        });
 
         textInputEmail = findViewById(R.id.registration_view_email_layout);
         textInputNickname = findViewById(R.id.registration_view_nickname_layout);
@@ -44,15 +64,15 @@ public class RegistrationActivity extends AppCompatActivity {
         });
 
         registrationBtn = findViewById(R.id.registration_view_button);
-        registrationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean flag = confirmInput(v);
-                if (flag) {
-                    Intent intent = new Intent(RegistrationActivity.this, YourProfileActivity.class);
-                    startActivity(intent);
-                }
+        registrationBtn.setOnClickListener(v -> {
+            if (!confirmInput(v)) {
+                return;
             }
+            mViewModel.register(
+                    textInputEmail.getEditText().getText().toString(),
+                    textInputNickname.getEditText().getText().toString(),
+                    textInputPassword.getEditText().getText().toString()
+            );
         });
     }
 
@@ -60,10 +80,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String emailInput = textInputEmail.getEditText().getText().toString().trim();
 
         if (emailInput.isEmpty()) {
-            textInputEmail.setError("Поле должно быть заполнено");
+            textInputEmail.setError(getString(R.string.field_must_be_filled));
             return false;
         } else if(!emailInput.matches("^.+@.+\\.[a-zA-Z]+$")){
-            textInputEmail.setError("Введите корректный email");
+            textInputEmail.setError(getString(R.string.please_give_right_email));
             return false;
         }
 
@@ -75,13 +95,13 @@ public class RegistrationActivity extends AppCompatActivity {
         String nicknameInput = textInputNickname.getEditText().getText().toString().trim();
 
         if (nicknameInput.isEmpty()) {
-            textInputNickname.setError("Поле должно быть заполнено");
+            textInputNickname.setError(getString(R.string.field_must_be_filled));
             return false;
         } else if (nicknameInput.length() < 3 || nicknameInput.length() > 30) {
-            textInputNickname.setError("Длина никнейма от 3 до 30 символов");
+            textInputNickname.setError(getString(R.string.nickname_length_range));
             return false;
         } else if (!nicknameInput.matches("^[a-zA-Z0-9_]{3,30}$")) {
-            textInputNickname.setError("Только символы латинского алфавита и нижнее подчёркивание");
+            textInputNickname.setError(getString(R.string.nickname_wrong_symbols));
             return false;
         }
 
@@ -93,10 +113,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String passwordInput = textInputPassword.getEditText().getText().toString().trim();
 
         if (passwordInput.isEmpty()) {
-            textInputPassword.setError("Поле должно быть заполнено");
+            textInputPassword.setError(getString(R.string.field_must_be_filled));
             return false;
         } else if (passwordInput.length() < 6 || passwordInput.length() > 30) {
-            textInputPassword.setError("Длина никнейма от 6 до 30 символов");
+            textInputPassword.setError(getString(R.string.password_length_range));
             return false;
         }
 

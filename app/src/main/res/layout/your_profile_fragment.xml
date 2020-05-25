@@ -1,105 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/your_profile_swipe_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:id="@+id/your_profile_header_w_photo"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="20dp"
-        android:layout_alignParentTop="true">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/your_profile_view_image_field"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/fix_user_photo"
-            app:civ_border_color="#FF000000"/>
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
-
-            <TextView
-                android:id="@+id/your_profile_view_nickname_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="nickname"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"/>
-            <TextView
-                android:id="@+id/your_profile_view_status_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="статус"
-                android:textSize="17dp"
-                android:textColor="@android:color/black"/>
-        </LinearLayout>
-
-        <LinearLayout
+            android:id="@+id/your_profile_header_w_photo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="right">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+            android:layout_alignParentTop="true">
 
-            <Button
-                android:id="@+id/your_profile_buttons_edit_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/edit"/>
-            <Button
-                android:id="@+id/your_profile_buttons_plus_button"
-                android:layout_width="33dp"
-                android:layout_height="33dp"
-                android:background="@drawable/plus_board_pin"
-                android:layout_marginTop="30dp"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/your_profile_view_image_field"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/fix_user_photo"
+                app:civ_border_color="#FF000000"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+                <TextView
+                    android:id="@+id/your_profile_view_nickname_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="nickname"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"/>
+                <TextView
+                    android:id="@+id/your_profile_view_status_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="статус"
+                    android:textSize="17dp"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="right">
+
+                <Button
+                    android:id="@+id/your_profile_buttons_edit_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/edit"/>
+                <Button
+                    android:id="@+id/your_profile_buttons_plus_button"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:background="@drawable/plus_board_pin"
+                    android:layout_marginTop="30dp"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/your_profile_pin_board_buttons"
-        android:layout_below="@id/your_profile_header_w_photo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <Button
-            android:id="@+id/your_profile_buttons_board_button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/your_profile_pin_board_buttons"
+            android:layout_below="@id/your_profile_header_w_photo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="Доски"/>
-        <Button
-            android:id="@+id/your_profile_buttons_pin_button"
-            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <Button
+                android:id="@+id/your_profile_buttons_board_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="Доски"/>
+            <Button
+                android:id="@+id/your_profile_buttons_pin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Пины"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_below="@id/your_profile_pin_board_buttons"
+            android:id="@+id/your_profile_view_error_field"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Пины"/>
-    </LinearLayout>
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
 
-    <TextView
-        android:layout_below="@id/your_profile_pin_board_buttons"
-        android:id="@+id/your_profile_view_error_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_red_light"
-        android:gravity="center"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"/>
-
-    <LinearLayout
-        android:layout_below="@id/your_profile_view_error_field"
-        android:layout_margin="10dp"
-        android:id="@+id/your_profile_doard_pin_f_place"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"/>
-</RelativeLayout>
+        <LinearLayout
+            android:layout_below="@id/your_profile_view_error_field"
+            android:layout_margin="10dp"
+            android:id="@+id/your_profile_doard_pin_f_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </RelativeLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

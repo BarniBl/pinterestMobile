@@ -1,11 +1,9 @@
 package com.solar.pinterest.solarmobile;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +11,22 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
+import com.solar.pinterest.solarmobile.EventBus.Event;
+import com.solar.pinterest.solarmobile.EventBus.EventBus;
+import com.solar.pinterest.solarmobile.network.models.EditProfile;
+import com.solar.pinterest.solarmobile.network.models.User;
+import com.solar.pinterest.solarmobile.storage.StatusEntity;
 
 public class YourProfileEditingFragment extends Fragment {
-
+    private static final String TAG = "SolarMobile.ProfileEdit";
     public static final int PICK_IMAGE = 1;
 
     Button closeSettingsButton;
@@ -82,14 +86,26 @@ public class YourProfileEditingFragment extends Fragment {
             }
         });
 
+        LiveData<Pair<User, StatusEntity>> liveUser = ((YourProfileActivity) getActivity()).getViewModel().getMasterUser();
+        liveUser.observe(getViewLifecycleOwner(), pair -> {
+            onUserLoaded(pair);
+        });
+
         okSettingsButton = view.findViewById(R.id.your_profile_editing_ok_button);
         okSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean flag = confirmInput(v);
-                if (flag) {
-                    replaceFragment();
+
+                if (!flag) {
+                    return;
                 }
+
+                EditProfile editProfile = new EditProfile(textInputName.getEditText().getText().toString(), textInputSurname.getEditText().getText().toString(), textInputNickname.getEditText().getText().toString(), textInputStatus.getEditText().getText().toString());
+                LiveData<StatusEntity> liveStatus = ((YourProfileActivity) getActivity()).getViewModel().editMasterUser(editProfile);
+                liveStatus.observe(getViewLifecycleOwner(), res -> {
+                    onUserEdited(res);
+                });
             }
         });
 
@@ -97,7 +113,11 @@ public class YourProfileEditingFragment extends Fragment {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // TODO
+                EventBus.get().emit(new Event(getString(R.string.event_logout)));
+//                AuthRepo.get(getActivity().getApplication()).logout();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                getActivity().finish();
+                startActivity(intent);
             }
         });
 
@@ -105,10 +125,9 @@ public class YourProfileEditingFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && data != null) {
-           avatarImage.setImageURI(data.getData());
+            avatarImage.setImageURI(data.getData());
         }
     }
 
@@ -116,8 +135,8 @@ public class YourProfileEditingFragment extends Fragment {
         String nicknameInput = textInputNickname.getEditText().getText().toString().trim();
 
         if (nicknameInput.isEmpty()) {
-            textInputNickname.setError("Поле должно быть заполнено");
-            return false;
+            //textInputNickname.setError("Поле должно быть заполнено");
+            return true;
         } else if (nicknameInput.length() < 3 || nicknameInput.length() > 30) {
             textInputNickname.setError("Длина никнейма от 3 до 30 символов");
             return false;
@@ -127,7 +146,7 @@ public class YourProfileEditingFragment extends Fragment {
         }
 
         textInputNickname.setError(null);
-        return  true;
+        return true;
     }
 
     private boolean confirmInput(View v) {
@@ -154,5 +173,46 @@ public class YourProfileEditingFragment extends Fragment {
                 .replace(R.id.your_profile_view_relativeLayout, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void onUserLoaded(Pair<User, StatusEntity> pair) {
+        switch (pair.second.getStatus()) {
+            case FAILED:
+                errorSettingsTextView.setText(pair.second.getMessage());
+                break;
+            case EMPTY:
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
+            case SUCCESS:
+                User user = pair.first;
+
+                String path = getActivity().getApplicationContext().getString(R.string.backend_uri) + user.avatarDir;
+                Glide.with(getActivity().getApplicationContext())
+                        .load(path)
+                        .placeholder(R.drawable.fix_user_photo)
+                        .dontAnimate()  // Against the Bug with GIFs and Transition on CircleImageView
+                        .into(avatarImage);
+
+                textName.setText(user.name);
+                textSurname.setText(user.surname);
+                textNickname.setText(user.username);
+                textStatus.setText(user.status);
+            default:
+                break;
+        }
+    }
+
+    public void onUserEdited(StatusEntity res) {
+        switch (res.getStatus()) {
+            case FAILED:
+                errorSettingsTextView.setText(res.getMessage());
+                break;
+            case SUCCESS:
+                replaceFragment();
+                break;
+            default:
+                Log.e(TAG, "Unexpected authStatus value: " + res.getStatus().toString());
+        }
     }
 }
